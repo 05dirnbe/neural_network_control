@@ -28,5 +28,11 @@
 *.out
 *.app
 
+# Makefile stuff
+CMake*/
+CMakeCache*
+*.cmake
+Makefile
+
 # Python stuff
 *.pyc
