@@ -26,14 +26,14 @@ for arg in vars(args):
 if command:
 
 	context = zmq.Context()
-	socket = context.socket(zmq.REQ)
+	socket = context.socket(zmq.PAIR)
 	socket.connect(host)
 
 	logging.info("Sending command: %s to port %s at host %s.", command, port, host)
 
 	socket.send(command)
 	message = socket.recv()
-	logging.info("Received reply from server:%s", message)
+	logging.info("Received echo from server:%s", message)
 
 else:
 	logging.info("No command selected. Use -h | --help to see options.")
