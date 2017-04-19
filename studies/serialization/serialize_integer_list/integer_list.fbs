@@ -1,0 +1,8 @@
+// Example IDL file for our monster's schema.
+namespace Buffer;
+
+table IntegerArray {
+  values:[int];   // Vector of int.
+}
+root_type IntegerArray;
+
