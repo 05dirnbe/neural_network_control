@@ -1,0 +1,10 @@
+
+namespace Buffer;
+
+table String {
+ 
+  message:string;
+}
+  
+root_type String;
+
