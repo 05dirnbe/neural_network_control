@@ -7,15 +7,21 @@ def main(context):
     logger = logging.getLogger(__name__)
 
     commander = bind_socket(context, socket_type = zmq.REP, connection = connections["controller"])
-    input_data = bind_socket(context, socket_type = zmq.SUB, connection = connections["camera_data"])
+    
+    input_data = bind_socket(context, socket_type = zmq.SUB, connection = connections["camera"])
     input_data.setsockopt(zmq.SUBSCRIBE,"")
   
+    output_data = bind_socket(context, socket_type = zmq.PUB, connection = connections["monitor"])
+
     # Initialize poll set
     poller = zmq.Poller()
     poller.register(commander, zmq.POLLIN)
     poller.register(input_data, zmq.POLLIN)
 
     # Process messages from both sockets
+    
+    command = None
+
     while True:
         try:
             socks = dict(poller.poll())
@@ -32,8 +38,16 @@ def main(context):
             data = input_data.recv()
             logger.info("Recieved data: %s", data)
        
+        if command == "read_weights":
+            output_data.send("%s %s" % (topics["weights"], "Weights data"))
+            logger.info("Sending data: Weights")
+
+        if command == "read_parameters":
+            output_data.send("%s %s" % (topics["parameters"], "Parameters data"))
+            logger.info("Sending data: Parameters")
+
     return 
-         
+
 if __name__ == '__main__':
 
     # Setup for application logging

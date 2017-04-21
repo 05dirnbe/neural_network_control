@@ -42,9 +42,8 @@ if __name__ == '__main__':
 
 	# Setup for parsing command line arguments
 	parser = argparse.ArgumentParser(prog="camera_data", description='Simulates the behaviour of the camera generating relevant data.')
-	group = parser.add_mutually_exclusive_group()
-	group.add_argument('-n', help='Number of data events to be send.', type=int, default=10)
-	group.add_argument('-s', help='Number of seconds to sleep in between two sends.', type=float, default=1)
+	parser.add_argument('-n', help='Number of data events to be send.', type=int, default=10)
+	parser.add_argument('-s', help='Number of seconds to sleep in between two sends.', type=float, default=1)
 	args = parser.parse_args()
 
 	context = zmq.Context()

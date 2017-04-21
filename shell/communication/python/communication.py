@@ -7,9 +7,13 @@ socket_name = { 6: "zmq.ROUTER", 5: "zmq.DEALER", 4 : "zmq.REP", 3: "zmq.REQ", 2
 connections = {	"commander"	:	"tcp://localhost:5555",
 				"controller"	:	"tcp://*:5555",
 				"input_data"	:	"tcp://localhost:5556",
-				"camera_data"	:	"tcp://*:5556",
-				"fake_camera_data"	:	"tcp://*:5556",
+				"camera"	:	"tcp://*:5556",
+				"output_data"	:	"tcp://localhost:5557",
+				"monitor"	:	"tcp://*:5557",
 			  }
+
+topics = {"weights" : "weights", "parameters" : "parameters", "spikes" : "spikes"}
+
 
 def bind_socket(context, socket_type, connection):
 
