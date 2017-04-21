@@ -36,3 +36,6 @@ Makefile
 
 # Python stuff
 *.pyc
+
+# Logging stuff
+*.log
