@@ -7,9 +7,9 @@ def main(context):
     logger = logging.getLogger(__name__)
 
     commander = bind_socket(context, socket_type = zmq.REP, connection = connections["controller"])
-    input_data = bind_socket(context, socket_type = zmq.SUB, connection = connections["input_data"])
+    input_data = bind_socket(context, socket_type = zmq.SUB, connection = connections["camera_data"])
     input_data.setsockopt(zmq.SUBSCRIBE,"")
-   
+  
     # Initialize poll set
     poller = zmq.Poller()
     poller.register(commander, zmq.POLLIN)
@@ -31,7 +31,9 @@ def main(context):
         if input_data in socks:
             data = input_data.recv()
             logger.info("Recieved data: %s", data)
-            
+       
+    return 
+         
 if __name__ == '__main__':
 
     # Setup for application logging

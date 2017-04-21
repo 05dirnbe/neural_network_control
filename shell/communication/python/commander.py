@@ -33,6 +33,7 @@ def main(args, context):
 	else:
 		logger.info("No command selected. Use -h | --help to see options.")
 
+	return
 
 
 if __name__ == '__main__':

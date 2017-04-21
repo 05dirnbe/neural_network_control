@@ -7,8 +7,8 @@ def main(args, context):
 	
 	logger = logging.getLogger(__name__)
 
-	input_data = connect_socket(context, socket_type = zmq.PUB, connection = connections["camera_data"])
-
+	input_data = connect_socket(context, socket_type = zmq.PUB, connection = connections["input_data"])
+	
 	logger.info("Starting data stream. Sending %d elements.", args.n)
 
 	try:
@@ -28,6 +28,8 @@ def main(args, context):
 			logger.info("Shutting down camera data stream.")
 			sys.exit()
 
+	return
+
 if __name__ == '__main__':
 
 	# Setup for application logging
@@ -42,7 +44,7 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser(prog="camera_data", description='Simulates the behaviour of the camera generating relevant data.')
 	group = parser.add_mutually_exclusive_group()
 	group.add_argument('-n', help='Number of data events to be send.', type=int, default=10)
-	group.add_argument('-s', help='Number of seconds to sleep in between two sends.', type=int, default=1)
+	group.add_argument('-s', help='Number of seconds to sleep in between two sends.', type=float, default=1)
 	args = parser.parse_args()
 
 	context = zmq.Context()
