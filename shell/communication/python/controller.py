@@ -7,16 +7,13 @@ def main(context):
     logger = logging.getLogger(__name__)
 
     commander = bind_socket(context, socket_type = zmq.REP, connection = connections["controller"])
-
-    # # Connect to weather server
-    # subscriber = context.socket(zmq.SUB)
-    # subscriber.connect("tcp://localhost:5556")
-    # subscriber.setsockopt(zmq.SUBSCRIBE, b"10001")
-
+    input_data = bind_socket(context, socket_type = zmq.SUB, connection = connections["input_data"])
+    input_data.setsockopt(zmq.SUBSCRIBE,"")
+   
     # Initialize poll set
     poller = zmq.Poller()
     poller.register(commander, zmq.POLLIN)
-    # poller.register(subscriber, zmq.POLLIN)
+    poller.register(input_data, zmq.POLLIN)
 
     # Process messages from both sockets
     while True:
@@ -26,16 +23,15 @@ def main(context):
             break
 
         if commander in socks:
-            message = commander.recv()
-            logger.info("Recieved command: %s", message)
-            commander.send(message)
-            logger.info("Acknowledged command: %s", message)
-            # process task
-
-        # if subscriber in socks:
-        #     message = subscriber.recv()
-        #     # process weather update
-
+            command = commander.recv()
+            logger.info("Recieved command: %s", command)
+            commander.send(command)
+            logger.debug("Acknowledged command: %s", command)
+   
+        if input_data in socks:
+            data = input_data.recv()
+            logger.info("Recieved data: %s", data)
+            
 if __name__ == '__main__':
 
     # Setup for application logging
