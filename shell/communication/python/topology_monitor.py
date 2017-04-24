@@ -8,7 +8,7 @@ def main(args, context):
 	logger = logging.getLogger(__name__)
 
 	output_data = connect_socket(context, socket_type = zmq.SUB, connection = connections["output_data"])
-	output_data.setsockopt(zmq.SUBSCRIBE,topics["weights"])
+	output_data.setsockopt(zmq.SUBSCRIBE,topics["topology"])
 
 	logger.info("Listening for data stream.")
 
@@ -43,7 +43,7 @@ if __name__ == '__main__':
 	logging.getLogger("").addHandler(console)
 
 	# Setup for parsing command line arguments
-	parser = argparse.ArgumentParser(prog="weight_monitor", description='Monitors the output of the controller regarding weights.')
+	parser = argparse.ArgumentParser(prog="topology_monitor", description='Monitors the output of the controller regarding network topology.')
 	parser.add_argument('-s', help='Number of seconds to sleep in between two recieves.', type=float, default=0)
 	args = parser.parse_args()
 

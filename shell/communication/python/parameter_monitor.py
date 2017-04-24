@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
 	# Setup for parsing command line arguments
 	parser = argparse.ArgumentParser(prog="parameter_monitor", description='Monitors the output of the controller regarding parameters.')
-	parser.add_argument('-s', help='Number of seconds to sleep in between two sends.', type=float, default=0)
+	parser.add_argument('-s', help='Number of seconds to sleep in between two revieves.', type=float, default=0)
 	args = parser.parse_args()
 
 	context = zmq.Context()
