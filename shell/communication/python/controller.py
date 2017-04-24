@@ -4,13 +4,15 @@ import time, sys
 
 import communication
 import configuration
+import fpga
 
 class Controller(object):
 
-	def __init__(self, config = configuration.Config()):
+	def __init__(self, config = configuration.Config(), FPGA = fpga.FPGA()):
 
 		self.context = zmq.Context()
 		self.settings = config
+		self.FPGA = FPGA
 		
 		self.connections = self.settings.connections
 		self.read_commands = self.settings.read_commands
@@ -37,7 +39,6 @@ class Controller(object):
 		self.logger.info("Initialization complete.")
 
 		self.command = None
-
 
 	def serve_forever(self):
 
@@ -100,25 +101,11 @@ class Controller(object):
 
 	def read_fpga_data(self, topic):
 		
-		self.logger.info("Reading FPGA data: %s", topic )
-
-		# fpga helper
-		# data = self.FPGA.read(topic = self.topics[topic])
-
-		data =  "data"
-		time.sleep(1)
-
-		return data
+		return self.FPGA.read(topic = topic)
 
 	def write_fpga_data(self, data, topic):
 		
-		self.logger.info("Writing FPGA data: %s", topic )
-
-		# fpga helper
-		# self.FPGA.write(data, topic = self.topics[topic])
-
-		time.sleep(1)
-
+		self.FPGA.write(data, topic = topic)
 		self.pause()
 
 	def publish_fpga_data(self, output_data, data, topic):
