@@ -47,23 +47,23 @@ class FPGA_Operations(object):
 
 		return "FPGA_dummy"
 
-	def write_weights(self):
+	def write_weights(self, data):
 
 		return "FPGA_weights"
 
-	def write_parameters(self):
+	def write_parameters(self, data):
 
 		return "FPGA_parameters"
 
-	def write_spikes(self):
+	def write_spikes(self, data):
 
 		return "FPGA_spikes"
 
-	def write_topology(self):
+	def write_topology(self, data):
 
 		return "FPGA_topology"
 
-	def dummy_write(self):
+	def dummy_write(self, data):
 
 		return "FPGA_dummy"
 
@@ -110,20 +110,20 @@ class FPGA(FPGA_Adapter):
 		self.operator.prepare_write()
 
 		if topic == "weights":
-			self.operator.write_weights()
+			self.operator.write_weights(data)
 			return
 
 		if topic == "parameters":
-			self.operator.write_parameters()
+			self.operator.write_parameters(data)
 			return
 
 		if topic == "spikes":
-			self.operator.write_spikes()
+			self.operator.write_spikes(data)
 			return
 
 		if topic == "topology":
-			self.operator.write_topology()
+			self.operator.write_topology(data)
 			return
 
-		self.operator.dummy_write()
+		self.operator.dummy_write(data)
 
