@@ -3,10 +3,6 @@ Problems to be addressed in improved versions:
 
 3) Figure out how to deal with commands that have a payload
 
-4) Write a class representing the fpga operations
-
-5) Add the fpga class to the controller as member
-
 6) Write a class that encapsulates the serialization needed
 
 7) Add class to the controller
