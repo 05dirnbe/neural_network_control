@@ -1,0 +1,5 @@
+Problems to be addressed in improved versions:
+
+1) controller is a huge if then mess. The pieces need to be rearranged and possibly packaged in a class or even design pattern. 
+
+2) The monitors are 99% identical. Thus, the should be packaged in a class.
