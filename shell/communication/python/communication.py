@@ -12,7 +12,7 @@ connections = {	"commander"	:	"tcp://localhost:5555",
 				"monitor"	:	"tcp://*:5557",
 			  }
 
-topics = {"weights" : "weights", "parameters" : "parameters", "spikes" : "spikes"}
+topics = {"weights" : "weights", "parameters" : "parameters", "spikes" : "spikes", "topology" : "topology" }
 
 
 def bind_socket(context, socket_type, connection):

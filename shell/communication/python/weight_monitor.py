@@ -26,7 +26,7 @@ def main(args, context):
 		sys.exit()
 
 	except KeyboardInterrupt as e:
-		logger.exception("User interrupt.")
+		logger.debug("User interrupt.")
 		logger.info("Shutting down monitor.")
 		sys.exit()
 
