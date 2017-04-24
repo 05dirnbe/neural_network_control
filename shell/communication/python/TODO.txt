@@ -1,5 +1,15 @@
 Problems to be addressed in improved versions:
 
-1) controller is a huge if then mess. The pieces need to be rearranged and possibly packaged in a class or even design pattern. 
+1) move the dependence on write and read commands to the communications module
 
-2) The monitors are 99% identical. Thus, the should be packaged in a class.
+2) make sure the commander uses the commands from the communications module
+
+3) Figure out how to deal with commands that have a payload
+
+4) Write a class representing the fpga operations
+
+5) Add the fpga class to the controller as member
+
+6) Write a class that encapsulates the serialization needed
+
+7) Add class to the controller
