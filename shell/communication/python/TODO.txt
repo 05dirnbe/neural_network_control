@@ -1,8 +1,5 @@
 Problems to be addressed in improved versions:
 
-1) move the dependence on write and read commands to the communications module
-
-2) make sure the commander uses the commands from the communications module
 
 3) Figure out how to deal with commands that have a payload
 

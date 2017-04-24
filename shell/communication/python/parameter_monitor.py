@@ -1,14 +1,16 @@
 #!/usr/bin/python
 import argparse, logging, sys, time
 import zmq
-from communication import *
+import communication
+import configuration
 
 def main(args, context):
 	
 	logger = logging.getLogger(__name__)
+	settings = configuration.Config()
 
-	output_data = connect_socket(context, socket_type = zmq.SUB, connection = connections["output_data"])
-	output_data.setsockopt(zmq.SUBSCRIBE,topics["parameters"])
+	output_data = communication.connect_socket(context, socket_type = zmq.SUB, connection = settings.connections["output_data"])
+	output_data.setsockopt(zmq.SUBSCRIBE,settings.topics["parameters"])
 
 	logger.info("Listening for data stream.")
 

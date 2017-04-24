@@ -1,14 +1,16 @@
 #!/usr/bin/python
 import argparse, logging, sys
 import zmq
-from communication import *
+import communication
+import configuration
 
 def main(args, context):
 	# Setup for communication with commander. 
 	
 	logger = logging.getLogger(__name__)
+	settings = configuration.Config()
 
-	controller = connect_socket(context, socket_type = zmq.REQ, connection = connections["commander"])
+	controller = communication.connect_socket(context, socket_type = zmq.REQ, connection = settings.connections["commander"])
 
 	command = None
 	for arg in vars(args):
@@ -47,6 +49,7 @@ if __name__ == '__main__':
 	logging.getLogger("").addHandler(console)
 
 	# Setup for parsing command line arguments
+	# see configuration module for options
 	parser = argparse.ArgumentParser(prog="commander", description='Generates and sends commands to the controller which interacts with the neural network.')
 	group = parser.add_mutually_exclusive_group()
 	group.add_argument('-q', '--quit', help='Shutdown controller', action='store_true')

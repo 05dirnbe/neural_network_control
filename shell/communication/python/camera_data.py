@@ -1,13 +1,15 @@
 #!/usr/bin/python
 import argparse, logging, sys, time
 import zmq
-from communication import *
+import communication
+import configuration
 
 def main(args, context):
 	
 	logger = logging.getLogger(__name__)
+	settings = configuration.Config()
 
-	input_data = connect_socket(context, socket_type = zmq.PUB, connection = connections["input_data"])
+	input_data = communication.connect_socket(context, socket_type = zmq.PUB, connection = settings.connections["input_data"])
 	
 	logger.info("Starting data stream. Sending %d elements.", args.n)
 

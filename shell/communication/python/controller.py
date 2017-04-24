@@ -1,18 +1,22 @@
 import zmq
 import logging
 import time, sys
+
 import communication
+import configuration
 
 class Controller(object):
 
-	def __init__(self, connections=communication.connections, topics=communication.topics):
+	def __init__(self, config = configuration.Config()):
 
 		self.context = zmq.Context()
-		self.connections = connections
-		self.read_commands = ["read_weights", "read_parameters", "read_spikes", "read_topology"]
-		self.write_commands = ["write_weights", "write_parameters", "write_topology"]
+		self.settings = config
+		
+		self.connections = self.settings.connections
+		self.read_commands = self.settings.read_commands
+		self.write_commands = self.settings.write_commands
+		self.topics = self.settings.topics
 
-		self.topics = topics
 		self.logger = logging.getLogger("controller")
 
 		self.logger.info("Initializing controller ...")
@@ -76,7 +80,7 @@ class Controller(object):
 		if command == "quit":	self.quit()
 		if command == "pause": 	self.pause()
 
-		if command in self.read_commands:
+		if command in self.settings.read_commands:
 
 			topic = remove_prefix(command,"read_")
 			data = self.read_fpga_data(topic=topic)
@@ -84,7 +88,7 @@ class Controller(object):
 
 			return
 
-		if command in self.write_commands:
+		if command in self.settings.write_commands:
 
 			topic = remove_prefix(command,"write_")
 			data = self.read_data(self.commander, topic = topic)
