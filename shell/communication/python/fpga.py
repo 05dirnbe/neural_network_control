@@ -63,6 +63,10 @@ class FPGA_Operations(object):
 
 		return "FPGA_topology"
 
+	def write_camera(self, data):
+
+		return "FPGA_camera_data"
+
 	def dummy_write(self, data):
 
 		return "FPGA_dummy"
@@ -123,6 +127,10 @@ class FPGA(FPGA_Adapter):
 
 		if topic == "topology":
 			self.operator.write_topology(data)
+			return
+
+		if topic == "camera":
+			self.operator.write_camera(data)
 			return
 
 		self.operator.dummy_write(data)

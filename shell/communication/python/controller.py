@@ -57,6 +57,7 @@ class Controller(object):
 
 			if self.input_data in socks:	
 				camera_data = self.read_camera_data(self.input_data)
+				self.write_fpga_data(camera_data, topic="camera")
 
 			self.handle_command(self.command)
 				

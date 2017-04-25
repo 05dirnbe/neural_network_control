@@ -6,7 +6,7 @@ class Config(object):
 
 		self.read_commands = ["read_weights", "read_parameters", "read_spikes", "read_topology"]
 		self.write_commands = ["write_weights", "write_parameters", "write_topology"]
-		self.topics = {"weights" : "weights", "parameters" : "parameters", "spikes" : "spikes", "topology" : "topology" }
+		self.topics = {"weights" : "weights", "parameters" : "parameters", "spikes" : "spikes", "topology" : "topology", "camera": "camera" }
 
 		self.connections = {	"commander"	:	"tcp://localhost:5555",
 				"controller"	:	"tcp://*:5555",
