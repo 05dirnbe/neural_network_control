@@ -4,15 +4,17 @@ import time, sys
 
 import communication
 import configuration
+import serialization
 import fpga
 
 class Controller(object):
 
-	def __init__(self, config = configuration.Config(), FPGA = fpga.FPGA()):
+	def __init__(self, config = configuration.Config(), FPGA = fpga.FPGA(), serializer = serialization.Serializer()):
 
 		self.context = zmq.Context()
 		self.settings = config
 		self.FPGA = FPGA
+		self.serializer = serializer
 		
 		self.connections = self.settings.connections
 		self.read_commands = self.settings.read_commands
@@ -29,7 +31,6 @@ class Controller(object):
 		self.output_data = communication.bind_socket(self.context, socket_type = zmq.PUB, connection = self.connections["monitor"])
 		
 		#input subscribes to any topic, i.e. these sockets read from all their connections at once
-		# self.commander.setsockopt(zmq.SUBSCRIBE,"")
 		self.input_data.setsockopt(zmq.SUBSCRIBE,"")
 
 		self.logger.info("Initializing poll sets ...")
@@ -116,9 +117,9 @@ class Controller(object):
 		self.logger.info("Publishing %s monitor data: %s", topic, data)
 
 		# serialize stuff
-		# buf = self.serializer.write_buffer(data, topic)
+		data_buffer = self.serializer.write_buffer(data, topic)
 
-		output_data.send("%s %s" % (self.topics[topic], data))
+		output_data.send("%s %s" % (self.topics[topic], data_buffer))
 		
 	def read_camera_data(self, input_data):
 
@@ -128,10 +129,8 @@ class Controller(object):
 
 	def read_data(self, socket, topic):
 
-		buf = socket.recv()
-		# data = self.serializer.deserialize(buf,topic=topic)
-
-		data = "data"
+		data_buffer = socket.recv()
+		data = self.serializer.read_buffer(data_buffer,topic=topic)
 
 		self.logger.info("Recieved %s data: %s", topic, data)
 		return data

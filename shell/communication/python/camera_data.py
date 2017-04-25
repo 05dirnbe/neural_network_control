@@ -3,11 +3,13 @@ import argparse, logging, sys, time
 import zmq
 import communication
 import configuration
+import serialization
 
 def main(args, context):
 	
 	logger = logging.getLogger(__name__)
 	settings = configuration.Config()
+	serializer = serialization.Serializer()
 
 	input_data = communication.connect_socket(context, socket_type = zmq.PUB, connection = settings.connections["input_data"])
 	
@@ -17,10 +19,12 @@ def main(args, context):
 
 		for i in xrange(args.n):
 			
-			message = str(i)
+			logger.info("Sending: %s", str(i))
 
-			logger.info("Sending: %s", message)
-			input_data.send("Camera data packet %s" % message)
+			message = "Camera data packet %s" % str(i)
+			message_buffer = serializer.write_buffer(message, topic = "camera")
+			input_data.send(message_buffer)
+			
 			time.sleep(args.s)
 		
 		logger.info("Data transfer complete.")

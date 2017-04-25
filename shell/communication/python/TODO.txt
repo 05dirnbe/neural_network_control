@@ -1,6 +1,2 @@
 Problems to be addressed in improved versions:
 
-
-6) Write a class that encapsulates the serialization needed
-
-7) Add class to the controller

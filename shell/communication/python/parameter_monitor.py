@@ -3,11 +3,13 @@ import argparse, logging, sys, time
 import zmq
 import communication
 import configuration
+import serialization
 
 def main(args, context):
 	
 	logger = logging.getLogger(__name__)
 	settings = configuration.Config()
+	serializer = serialization.Serializer()
 
 	output_data = communication.connect_socket(context, socket_type = zmq.SUB, connection = settings.connections["output_data"])
 	output_data.setsockopt(zmq.SUBSCRIBE,settings.topics["parameters"])
@@ -18,7 +20,8 @@ def main(args, context):
 
 		while True:
 			
-			message = output_data.recv()
+			message_buffer = output_data.recv()
+			message = serializer.read_buffer(message_buffer, topic = "parameters")
 			logger.info("Recieved: %s", message)
 			time.sleep(args.s)
 		
