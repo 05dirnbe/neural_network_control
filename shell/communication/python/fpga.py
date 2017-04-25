@@ -49,26 +49,32 @@ class FPGA_Operations(object):
 
 	def write_weights(self, data):
 
+		self.logger.info("Payload is: %s", data)
 		return "FPGA_weights"
 
 	def write_parameters(self, data):
 
+		self.logger.info("Payload is: %s", data)
 		return "FPGA_parameters"
 
 	def write_spikes(self, data):
 
+		self.logger.info("Payload is: %s", data)
 		return "FPGA_spikes"
 
 	def write_topology(self, data):
 
+		self.logger.info("Payload is: %s", data)
 		return "FPGA_topology"
 
 	def write_camera(self, data):
 
+		self.logger.info("Payload is: %s", data)
 		return "FPGA_camera_data"
 
 	def dummy_write(self, data):
 
+		self.logger.info("Payload is: %s", data)
 		return "FPGA_dummy"
 
 class FPGA_Adapter(object):

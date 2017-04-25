@@ -24,12 +24,12 @@ class Controller(object):
 		self.logger.info("Initializing controller ...")
 		self.logger.info("Connecting sockets ...")
 
-		self.commander = communication.bind_socket(self.context, socket_type = zmq.SUB, connection = self.connections["controller"])
+		self.commander = communication.bind_socket(self.context, socket_type = zmq.REP, connection = self.connections["controller"])
 		self.input_data = communication.bind_socket(self.context, socket_type = zmq.SUB, connection = self.connections["camera"])
 		self.output_data = communication.bind_socket(self.context, socket_type = zmq.PUB, connection = self.connections["monitor"])
 		
 		#input subscribes to any topic, i.e. these sockets read from all their connections at once
-		self.commander.setsockopt(zmq.SUBSCRIBE,"")
+		# self.commander.setsockopt(zmq.SUBSCRIBE,"")
 		self.input_data.setsockopt(zmq.SUBSCRIBE,"")
 
 		self.logger.info("Initializing poll sets ...")
@@ -65,12 +65,13 @@ class Controller(object):
 				
 	def read_command(self, commander):
 		
-		command = commander.recv()
+		message = commander.recv()
+		command, payload = message.split(" ")
 		self.logger.info("Recieved command: %s", command)
 		commander.send(command)
 		self.logger.debug("Acknowledged command: %s", command)
 
-		return command
+		return command, payload
 	
 	def handle_command(self, command, payload):
 
@@ -95,8 +96,7 @@ class Controller(object):
 		if command in self.settings.write_commands:
 
 			topic = remove_prefix(command,"write_")
-			data = self.read_data(self.commander, topic = topic)
-			self.write_fpga_data(data, topic=topic)
+			self.write_fpga_data(payload, topic=topic)
 
 			return
 
