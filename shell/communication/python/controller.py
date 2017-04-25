@@ -57,7 +57,7 @@ class Controller(object):
 				self.command, payload = self.read_command(self.commander)
 
 			if self.input_data in socks:	
-				camera_data = self.read_camera_data(self.input_data)
+				camera_data = self.read_data(self.input_data, topic="camera")
 				self.write_fpga_data(camera_data, topic="camera")
 
 			if self.command:
@@ -128,7 +128,7 @@ class Controller(object):
 
 	def read_data(self, socket, topic):
 
-		# buf = socket.recv()
+		buf = socket.recv()
 		# data = self.serializer.deserialize(buf,topic=topic)
 
 		data = "data"
@@ -136,12 +136,6 @@ class Controller(object):
 		self.logger.info("Recieved %s data: %s", topic, data)
 		return data
 		
-	def read_camera_data(self, input_data):
-
-		camera_data = input_data.recv()
-		self.logger.info("Recieved data: %s", camera_data)
-		return camera_data
-
 	def quit(self):
 		self.logger.info("Shutting down controller.")
 		sys.exit()
