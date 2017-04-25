@@ -24,11 +24,12 @@ class Controller(object):
 		self.logger.info("Initializing controller ...")
 		self.logger.info("Connecting sockets ...")
 
-		self.commander = communication.bind_socket(self.context, socket_type = zmq.REP, connection = self.connections["controller"])
+		self.commander = communication.bind_socket(self.context, socket_type = zmq.SUB, connection = self.connections["controller"])
 		self.input_data = communication.bind_socket(self.context, socket_type = zmq.SUB, connection = self.connections["camera"])
 		self.output_data = communication.bind_socket(self.context, socket_type = zmq.PUB, connection = self.connections["monitor"])
 		
-		#input subscribes to any topic, i.e. this socket reads from all sources of input data at once
+		#input subscribes to any topic, i.e. these sockets read from all their connections at once
+		self.commander.setsockopt(zmq.SUBSCRIBE,"")
 		self.input_data.setsockopt(zmq.SUBSCRIBE,"")
 
 		self.logger.info("Initializing poll sets ...")
@@ -39,7 +40,7 @@ class Controller(object):
 		self.logger.info("Initialization complete.")
 
 		self.command = None
-
+		
 	def serve_forever(self):
 
 		self.logger.info("Controller ready. Listening for commands ...")
@@ -53,13 +54,14 @@ class Controller(object):
 				break
 
 			if self.commander in socks:		
-				self.command = self.read_command(self.commander)
+				self.command, payload = self.read_command(self.commander)
 
 			if self.input_data in socks:	
 				camera_data = self.read_camera_data(self.input_data)
 				self.write_fpga_data(camera_data, topic="camera")
 
-			self.handle_command(self.command)
+			if self.command:
+				self.handle_command(self.command, payload)
 				
 	def read_command(self, commander):
 		
@@ -70,7 +72,7 @@ class Controller(object):
 
 		return command
 	
-	def handle_command(self, command):
+	def handle_command(self, command, payload):
 
 		def remove_prefix(text, prefix):
 			if text.startswith(prefix):

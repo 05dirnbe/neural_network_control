@@ -10,7 +10,7 @@ def main(args, context):
 	logger = logging.getLogger(__name__)
 	settings = configuration.Config()
 
-	controller = communication.connect_socket(context, socket_type = zmq.REQ, connection = settings.connections["commander"])
+	controller = communication.connect_socket(context, socket_type = zmq.PUB, connection = settings.connections["commander"])
 
 	command = None
 	for arg in vars(args):
@@ -21,11 +21,11 @@ def main(args, context):
 
 		try:
 			logger.info("Command: %s", command)
-			controller.send(command)
-			message = controller.recv()
+			controller.send("%s %s" % (command, "payload"))
+			# message = controller.recv()
 
-			logger.debug("Controller executed command: %s", message)
-			assert(command == message)
+			# logger.debug("Controller executed command: %s", message)
+			# assert(command == message)
 
 		except Exception as e:
 			logger.exception("Command failed.")
