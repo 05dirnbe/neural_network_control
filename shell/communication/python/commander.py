@@ -45,9 +45,6 @@ class Commander(object):
 			sys.exit()
 			
 	def get_topic(self, command):
-
-		if command in self.settings.read_commands:
-			return self.remove_prefix(command,"read_")
 				
 		if command in self.settings.write_commands:
 			return self.remove_prefix(command,"write_")
