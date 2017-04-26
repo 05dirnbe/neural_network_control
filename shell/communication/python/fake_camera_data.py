@@ -19,7 +19,7 @@ def main(args, context):
 
 		for i in xrange(args.n):
 			
-			logger.info("Sending: %s", str(i))
+			logger.debug("Sending: %s", str(i))
 
 			message = "Camera fake data packet %s" % str(i)
 			message_buffer = serializer.write_buffer(message, topic = "camera")
@@ -41,7 +41,7 @@ if __name__ == '__main__':
 	# Setup for application logging
 	logging.basicConfig(level=logging.DEBUG, format='%(asctime)s: %(name)s: -- %(levelname)s -- %(message)s', filename="./log/fake_camera_data.log", filemode="w")
 	console = logging.StreamHandler()
-	console.setLevel(logging.INFO)
+	console.setLevel(logging.DEBUG)
 	formatter = logging.Formatter('%(name)s: -- %(levelname)s -- %(message)s')
 	console.setFormatter(formatter)
 	logging.getLogger("").addHandler(console)

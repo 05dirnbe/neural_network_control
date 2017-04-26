@@ -32,10 +32,10 @@ class Commander(object):
 			
 			topic = self.get_topic(command)
 
-			self.logger.info("Topic: %s", topic)
+			self.logger.debug("Topic: %s", topic)
 			
 			payload = self.payload.read(path=argument,topic=topic)
-			self.logger.info("Payload: %s", payload)
+			self.logger.debug("Payload: %s", payload)
 
 			self.send_command(command,payload)
 
@@ -82,7 +82,7 @@ if __name__ == '__main__':
 	console.setLevel(logging.INFO)
 	formatter = logging.Formatter('%(name)s: -- %(levelname)s -- %(message)s')
 	console.setFormatter(formatter)
-	logging.getLogger("").addHandler(console)
+	logging.getLogger("commander").addHandler(console)
 
 	# Setup for parsing command line arguments
 	# see configuration module for options

@@ -23,8 +23,8 @@ class Controller(object):
 
 		self.logger = logging.getLogger("controller")
 
-		self.logger.info("Initializing controller ...")
-		self.logger.info("Connecting sockets ...")
+		self.logger.debug("Initializing controller ...")
+		self.logger.debug("Connecting sockets ...")
 
 		self.commander = communication.bind_socket(self.context, socket_type = zmq.REP, connection = self.connections["controller"])
 		self.input_data = communication.bind_socket(self.context, socket_type = zmq.SUB, connection = self.connections["camera"])
@@ -33,12 +33,12 @@ class Controller(object):
 		#input subscribes to any topic, i.e. these sockets read from all their connections at once
 		self.input_data.setsockopt(zmq.SUBSCRIBE,"")
 
-		self.logger.info("Initializing poll sets ...")
+		self.logger.debug("Initializing poll sets ...")
 		# Initialize poll set
 		self.poller = zmq.Poller()
 		self.poller.register(self.commander, zmq.POLLIN)
 		self.poller.register(self.input_data, zmq.POLLIN)
-		self.logger.info("Initialization complete.")
+		self.logger.debug("Initialization complete.")
 
 		self.command = None
 		
@@ -57,11 +57,13 @@ class Controller(object):
 			if self.commander in socks:		
 				self.command, payload = self.read_command(self.commander)
 
-			if self.input_data in socks:	
+			if self.input_data in socks:
+				self.logger.debug("--------------- Handling Camera data --------------------")
 				camera_data = self.read_data(self.input_data, topic="camera")
 				self.write_fpga_data(camera_data, topic="camera")
 
 			if self.command:
+				self.logger.debug("--------------- Handling Command --------------------")
 				self.handle_command(self.command, payload)
 				
 	def read_command(self, commander):
@@ -70,8 +72,7 @@ class Controller(object):
 		command, payload = message.split()
 		self.logger.info("Recieved command: %s", command)
 		commander.send(command)
-		self.logger.debug("Acknowledged command: %s", command)
-
+		
 		return command, payload
 	
 	def handle_command(self, command, payload):
@@ -105,10 +106,12 @@ class Controller(object):
 
 	def read_fpga_data(self, topic):
 		
+		self.logger.debug("Reading %s FPGA data", topic)
 		return self.FPGA.read(topic = topic)
 
 	def write_fpga_data(self, data, topic):
 		
+		self.logger.info("Writing %s FPGA data: %s", topic, data)
 		self.FPGA.write(data, topic = topic)
 		self.pause()
 
@@ -124,7 +127,7 @@ class Controller(object):
 	def read_camera_data(self, input_data):
 
 		camera_data = input_data.recv()
-		self.logger.info("Recieved data: %s", camera_data)
+		self.logger.debug("Recieved data: %s", camera_data)
 		return camera_data
 
 	def read_data(self, socket, topic):
@@ -132,7 +135,7 @@ class Controller(object):
 		data_buffer = socket.recv()
 		data = self.serializer.read_buffer(data_buffer,topic=topic)
 
-		self.logger.info("Recieved %s data: %s", topic, data)
+		self.logger.debug("Recieved %s data: %s", topic, data)
 		return data
 		
 	def quit(self):
@@ -140,12 +143,11 @@ class Controller(object):
 		sys.exit()
 
 	def pause(self):
-		self.logger.info("Pausing operation. Controller waiting for new commands ...")
+		self.logger.debug("Controller waiting for next command ...")
 		self.command = None
 
 def main():
 
-		
 	try:
 		controller = Controller()
 		controller.serve_forever()
@@ -160,7 +162,7 @@ if __name__ == '__main__':
 	console.setLevel(logging.INFO)
 	formatter = logging.Formatter('%(name)s: -- %(levelname)s -- %(message)s')
 	console.setFormatter(formatter)
-	logging.getLogger("").addHandler(console)
+	logging.getLogger("controller").addHandler(console)
 
 	main()
 	

@@ -6,55 +6,56 @@ class Serializer_Operations(object):
 	def __init__(self):
 
 		self.logger = logging.getLogger("serializer")
+		self.logger.setLevel(logging.INFO)
 		
 	def deserialize_weights(self, data_buffer):
 		data = data_buffer
-		self.logger.info("Deserializing to obtain: %s", data)
+		self.logger.debug("Deserializing to obtain: %s", data)
 		return data
 
 	def deserialize_parameters(self, data_buffer):
 		data = data_buffer
-		self.logger.info("Deserializing to obtain: %s", data)
+		self.logger.debug("Deserializing to obtain: %s", data)
 		return data
 
 	def deserialize_spikes(self, data_buffer):
 		data = data_buffer
-		self.logger.info("Deserializing to obtain: %s", data)
+		self.logger.debug("Deserializing to obtain: %s", data)
 		return data
 
 	def deserialize_topology(self, data_buffer):
 		data = data_buffer
-		self.logger.info("Deserializing to obtain: %s", data)
+		self.logger.debug("Deserializing to obtain: %s", data)
 		return data
 
 	def dummy_deserialize(self, data_buffer):
 		data = data_buffer
-		self.logger.info("Deserializing to obtain: %s", data)
+		self.logger.debug("Deserializing to obtain: %s", data)
 		return data
 
 	def serialize_weights(self, data):
 		data_buffer = data
-		self.logger.info("Serializing: %s", data)
+		self.logger.debug("Serializing: %s", data)
 		return data_buffer
 
 	def serialize_parameters(self, data):
 		data_buffer = data
-		self.logger.info("Serializing: %s", data)
+		self.logger.debug("Serializing: %s", data)
 		return data_buffer
 
 	def serialize_spikes(self, data):
 		data_buffer = data
-		self.logger.info("Serializing: %s", data)
+		self.logger.debug("Serializing: %s", data)
 		return data_buffer
 
 	def serialize_topology(self, data):
 		data_buffer = data
-		self.logger.info("Serializing: %s", data)
+		self.logger.debug("Serializing: %s", data)
 		return data_buffer
 
 	def serialize_camera(self, data):
 		data_buffer = data
-		self.logger.info("Serializing: %s", data)
+		self.logger.debug("Serializing: %s", data)
 		return data_buffer
 
 	def dummy_serialize(self, data):
@@ -67,6 +68,7 @@ class Serializer_Adapter(object):
 	def __init__(self, operator, config):
 
 		self.logger = logging.getLogger("serialization")
+		self.logger.setLevel(logging.INFO)
 		self.settings = config
 		self.read_commands = self.settings.read_commands
 		self.write_commands = self.settings.write_commands
@@ -82,7 +84,7 @@ class Serializer(Serializer_Adapter):
 
 	def read_buffer(self, data_buffer, topic=None):
 
-		self.logger.info("Deserialzing topic: %s", topic )
+		self.logger.debug("Deserialzing topic: %s", topic )
 		
 		if topic == "weights":
 			return self.operator.deserialize_weights(data_buffer)
@@ -103,7 +105,7 @@ class Serializer(Serializer_Adapter):
 
 	def write_buffer(self, data, topic=None):
 
-		self.logger.info("Serializing topic: %s", topic )
+		self.logger.debug("Serializing topic: %s", topic )
 		
 		if topic == "weights":
 			return self.operator.serialize_weights(data)

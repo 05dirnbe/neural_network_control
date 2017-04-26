@@ -8,6 +8,7 @@ class Payload_Operations(object):
 	def __init__(self):
 
 		self.logger = logging.getLogger("Payload control")
+		self.logger.setLevel(logging.INFO)
 
 	def prepare_read(self, path):
 
@@ -15,7 +16,7 @@ class Payload_Operations(object):
 
 		if os.path.isfile(path):
 
-			self.logger.info("File exists: %s", path)
+			self.logger.debug("File exists: %s", path)
 
 		else:
 			self.logger.info("File does not exist: %s", path)
@@ -32,39 +33,39 @@ class Payload_Operations(object):
     		os.makedirs(directory)
 		
 	def read_weights(self, path):
-		self.logger.info("Reading: %s", path)
+		self.logger.debug("Reading: %s", path)
 		return "Payload_weights"
 
 	def read_parameters(self, path):
-		self.logger.info("Reading: %s", path)
+		self.logger.debug("Reading: %s", path)
 		return "Payload_parameters"
 
 	def read_topology(self, path):
-		self.logger.info("Reading: %s", path)
+		self.logger.debug("Reading: %s", path)
 		return "Payload_topology"
 
 	def dummy_read(self, path):
-		self.logger.info("Nothing to read ...")
+		self.logger.debug("Nothing to read ...")
 		return None
 
 	def write_weights(self, data, path):
 
-		self.logger.info("Writing: %s", path)
+		self.logger.debug("Writing: %s", path)
 		return "Payload_weights"
 
 	def write_parameters(self, data, path):
 
-		self.logger.info("Writing: %s", path)
+		self.logger.debug("Writing: %s", path)
 		return "Payload_parameters"
 
 	def write_topology(self, data, path):
 
-		self.logger.info("Writing: %s", path)
+		self.logger.debug("Writing: %s", path)
 		return "Payload_topology"
 
 	def dummy_write(self, data, path):
 
-		self.logger.info("Writing: %s", path)
+		self.logger.debug("Writing: %s", path)
 		return "Payload_dummy"
 
 class Payload_Adapter(object):
@@ -72,6 +73,7 @@ class Payload_Adapter(object):
 	def __init__(self, operator, config):
 
 		self.logger = logging.getLogger("Payload interface")
+		self.logger.setLevel(logging.INFO)
 		self.settings = config
 		self.read_commands = self.settings.read_commands
 		self.write_commands = self.settings.write_commands
@@ -88,17 +90,17 @@ class Payload(Payload_Adapter):
 	def read(self, path, topic=None):
 
 		if topic == "weights":
-			self.logger.info("Requesting Payload read: %s", topic )
+			self.logger.debug("Requesting Payload read: %s", topic )
 			self.operator.prepare_read(path)
 			return self.operator.read_weights(path)
 
 		if topic == "parameters":
-			self.logger.info("Requesting Payload read: %s", topic )
+			self.logger.debug("Requesting Payload read: %s", topic )
 			self.operator.prepare_read(path)
 			return self.operator.read_parameters(path)
 
 		if topic == "topology":
-			self.logger.info("Requesting Payload read: %s", topic )
+			self.logger.debug("Requesting Payload read: %s", topic )
 			self.operator.prepare_read(path)
 			return self.operator.read_topology(path)
 
@@ -107,19 +109,19 @@ class Payload(Payload_Adapter):
 	def write(self, data, path, topic=None):
 
 		if topic == "weights":
-			self.logger.info("Requesting Payload write: %s", topic )
+			self.logger.debug("Requesting Payload write: %s", topic )
 			self.operator.prepare_write(path)
 			self.operator.write_weights(data, path)
 			return
 
 		if topic == "parameters":
-			self.logger.info("Requesting Payload write: %s", topic )
+			self.logger.debug("Requesting Payload write: %s", topic )
 			self.operator.prepare_write(path)
 			self.operator.write_parameters(data, path)
 			return
 
 		if topic == "topology":
-			self.logger.info("Requesting Payload write: %s", topic )
+			self.logger.debug("Requesting Payload write: %s", topic )
 			self.operator.prepare_write(path)
 			self.operator.write_topology(data, path)
 			return
