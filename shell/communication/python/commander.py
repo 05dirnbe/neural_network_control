@@ -23,6 +23,7 @@ class Commander(object):
 
 		try:
 
+			# split command line arguments
 			for arg in vars(args):
 				if getattr(args, arg):
 					command, argument = arg, getattr(args, arg)
@@ -43,7 +44,6 @@ class Commander(object):
 			self.logger.info("Shutting down commander.")
 			sys.exit()
 			
-
 	def get_topic(self, command):
 
 		if command in self.settings.read_commands:
@@ -66,18 +66,16 @@ class Commander(object):
 		assert(command == response)
 		self.logger.info("Done.")
 
-
 	def remove_prefix(self, message, prefix):
+		
 		if message.startswith(prefix):
 			return message[len(prefix):]
 		return message
-
 
 def main(args):
 	
 	commander = Commander()
 	commander.process(args)
-
 
 if __name__ == '__main__':
 
