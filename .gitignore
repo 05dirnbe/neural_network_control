@@ -39,3 +39,4 @@ Makefile
 
 # Logging stuff
 *.log
+*log
