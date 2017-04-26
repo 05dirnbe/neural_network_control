@@ -4,14 +4,16 @@ import zmq
 import communication
 import configuration
 import serialization
+import payload
 
 class Commander(object):
 
-	def __init__(self, config = configuration.Config(), serializer = serialization.Serializer()):
+	def __init__(self, config = configuration.Config(), serializer = serialization.Serializer(), payload = payload.Payload()):
 		
 		self.context = zmq.Context()
 		self.settings = config
 		self.serializer = serializer
+		self.payload = payload
 
 		self.controller = communication.connect_socket(self.context, socket_type = zmq.REQ, connection = self.settings.connections["commander"])
 
@@ -19,15 +21,28 @@ class Commander(object):
 
 	def process(self, args):
 
-		for arg in vars(args):
-			if getattr(args, arg):
-				command, argument = arg, getattr(args, arg)
-			
-		topic = self.get_topic(command)
-		payload = self.load_payload_from_file(path=argument,topic=topic)
+		try:
 
-		print command, topic, argument, payload
-		self.send_command(command,payload)
+			for arg in vars(args):
+				if getattr(args, arg):
+					command, argument = arg, getattr(args, arg)
+				
+			self.logger.info("Command: %s", command)
+			
+			topic = self.get_topic(command)
+
+			self.logger.info("Topic: %s", topic)
+			
+			payload = self.payload.read(path=argument,topic=topic)
+			self.logger.info("Payload: %s", payload)
+
+			self.send_command(command,payload)
+
+		except Exception as error:
+			self.logger.exception("Processing command failed.")
+			self.logger.info("Shutting down commander.")
+			sys.exit()
+			
 
 	def get_topic(self, command):
 
@@ -39,40 +54,18 @@ class Commander(object):
 			
 		return None
 
-	def load_payload_from_file(self, path, topic):
-
-		return path
-
-		if topic == "weights":
-			return self.operator.read_weights()
-
-		if topic == "parameters":
-			return self.operator.read_parameters()
-
-		if topic == "topology":
-			return self.operator.read_topology()
-
-		return None
-
 	def send_command(self, command, payload):
 
-		try:
+		payload_buffer = self.serializer.write_buffer(payload, topic = self.get_topic(command))
+		
+		self.controller.send("%s %s" % (command, payload_buffer))
 
-			self.logger.info("Command: (%s, %s)", command, payload)
-			payload_buffer = self.serializer.write_buffer(payload, topic = self.get_topic(command))
-			
-			self.controller.send("%s %s" % (command, payload_buffer))
+		response = self.controller.recv()
 
-			response = self.controller.recv()
+		self.logger.debug("Controller executed command: %s", response)
+		assert(command == response)
+		self.logger.info("Done.")
 
-			self.logger.debug("Controller executed command: %s", response)
-			assert(command == response)
-			self.logger.info("Done.")
-
-		except Exception as e:
-			self.logger.exception("Command failed.")
-			self.logger.info("Shutting down commander.")
-			return
 
 	def remove_prefix(self, message, prefix):
 		if message.startswith(prefix):
@@ -84,8 +77,6 @@ def main(args):
 	
 	commander = Commander()
 	commander.process(args)
-	
-	return
 
 
 if __name__ == '__main__':
