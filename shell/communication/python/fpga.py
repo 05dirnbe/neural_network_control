@@ -6,7 +6,7 @@ class FPGA_Operations(object):
 
 	def __init__(self):
 
-		self.logger = logging.getLogger("operator")
+		self.logger = logging.getLogger("FPGA control")
 		self.state = None
 
 	def prepare_read(self):
@@ -81,7 +81,7 @@ class FPGA_Adapter(object):
 
 	def __init__(self, operator, config):
 
-		self.logger = logging.getLogger("FPGA control")
+		self.logger = logging.getLogger("FPGA interface")
 		self.settings = config
 		self.read_commands = self.settings.read_commands
 		self.write_commands = self.settings.write_commands

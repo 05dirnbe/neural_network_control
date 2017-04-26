@@ -5,27 +5,32 @@ class Serializer_Operations(object):
 
 	def __init__(self):
 
-		self.logger = logging.getLogger("operator")
+		self.logger = logging.getLogger("serializer")
 		
 	def deserialize_weights(self, data_buffer):
 		data = data_buffer
+		self.logger.info("Deserializing to obtain: %s", data)
 		return data
 
 	def deserialize_parameters(self, data_buffer):
 		data = data_buffer
+		self.logger.info("Deserializing to obtain: %s", data)
 		return data
 
 	def deserialize_spikes(self, data_buffer):
 		data = data_buffer
+		self.logger.info("Deserializing to obtain: %s", data)
 		return data
 
 	def deserialize_topology(self, data_buffer):
 		data = data_buffer
+		self.logger.info("Deserializing to obtain: %s", data)
 		return data
 
 	def dummy_deserialize(self, data_buffer):
 		data = data_buffer
-		return "deserialize_dummy"
+		self.logger.info("Deserializing to obtain: %s", data)
+		return data
 
 	def serialize_weights(self, data):
 		data_buffer = data
@@ -54,8 +59,8 @@ class Serializer_Operations(object):
 
 	def dummy_serialize(self, data):
 		data_buffer = data
-		self.logger.info("Serializing: %s", data)
-		return "serialize_dummy"
+		self.logger.debug("Serializing: %s", data)
+		return data
 
 class Serializer_Adapter(object):
 
@@ -114,6 +119,6 @@ class Serializer(Serializer_Adapter):
 			
 		if topic == "camera":
 			return self.operator.serialize_camera(data)
-			
+
 		return self.operator.dummy_serialize(data)
 

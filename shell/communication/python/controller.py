@@ -65,7 +65,7 @@ class Controller(object):
 				self.handle_command(self.command, payload)
 				
 	def read_command(self, commander):
-		
+
 		message = commander.recv()
 		command, payload = message.split(" ")
 		self.logger.info("Recieved command: %s", command)
@@ -76,10 +76,10 @@ class Controller(object):
 	
 	def handle_command(self, command, payload):
 
-		def remove_prefix(text, prefix):
-			if text.startswith(prefix):
-				return text[len(prefix):]
-			return text
+		def remove_prefix(message, prefix):
+			if message.startswith(prefix):
+				return message[len(prefix):]
+			return message
 
 		# handle easy cases immediately
 		if command == None:		return
