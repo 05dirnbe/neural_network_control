@@ -67,7 +67,7 @@ class Controller(object):
 	def read_command(self, commander):
 
 		message = commander.recv()
-		command, payload = message.split(" ")
+		command, payload = message.split()
 		self.logger.info("Recieved command: %s", command)
 		commander.send(command)
 		self.logger.debug("Acknowledged command: %s", command)
