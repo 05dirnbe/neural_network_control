@@ -30,6 +30,7 @@ class Serializer_Operations(object):
 
 	def deserialize_camera(self, data_buffer):
 		# recieve an str and turn it to int
+		assert type(data_buffer) == str
 		self.logger.debug("Deserializing to obtain: %s", data_buffer)
 		return int(data_buffer)
 
@@ -60,6 +61,7 @@ class Serializer_Operations(object):
 
 	def serialize_camera(self, data):
 		# here we want to serialize an int to str
+		assert type(data) == int
 		self.logger.debug("Serializing: %d", data)
 		return str(data)
 

@@ -128,7 +128,7 @@ class Controller(object):
 
 		data_buffer = socket.recv()
 		data = self.serializer.read_buffer(data_buffer,topic=topic)
-
+		assert type(data) == int
 		self.logger.debug("Recieved %s data: %s", topic, data)
 		return data
 		
