@@ -124,12 +124,6 @@ class Controller(object):
 
 		output_data.send("%s %s" % (self.topics[topic], data_buffer))
 		
-	def read_camera_data(self, input_data):
-
-		camera_data = input_data.recv()
-		self.logger.debug("Recieved data: %s", camera_data)
-		return camera_data
-
 	def read_data(self, socket, topic):
 
 		data_buffer = socket.recv()

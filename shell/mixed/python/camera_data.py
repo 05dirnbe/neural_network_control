@@ -21,7 +21,7 @@ def main(args, context):
 			
 			logger.debug("Sending: %s", str(i))
 
-			message = "Camera data packet %s" % str(i)
+			message = i
 			message_buffer = serializer.write_buffer(message, topic = "camera")
 			input_data.send(message_buffer)
 			

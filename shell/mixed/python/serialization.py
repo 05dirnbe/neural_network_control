@@ -28,6 +28,11 @@ class Serializer_Operations(object):
 		self.logger.debug("Deserializing to obtain: %s", data)
 		return data
 
+	def deserialize_camera(self, data_buffer):
+		# recieve an str and turn it to int
+		self.logger.debug("Deserializing to obtain: %s", data_buffer)
+		return int(data_buffer)
+
 	def dummy_deserialize(self, data_buffer):
 		data = data_buffer
 		self.logger.debug("Deserializing to obtain: %s", data)
@@ -54,9 +59,9 @@ class Serializer_Operations(object):
 		return data_buffer
 
 	def serialize_camera(self, data):
-		data_buffer = data
-		self.logger.debug("Serializing: %s", data)
-		return data_buffer
+		# here we want to serialize an int to str
+		self.logger.debug("Serializing: %d", data)
+		return str(data)
 
 	def dummy_serialize(self, data):
 		data_buffer = data
@@ -99,7 +104,7 @@ class Serializer(Serializer_Adapter):
 			return self.operator.deserialize_topology(data_buffer)
 
 		if topic == "camera":
-			return self.operator.deserialize_topology(data_buffer)
+			return self.operator.deserialize_camera(data_buffer)
 
 		return self.operator.dummy_deserialize(data_buffer)
 
