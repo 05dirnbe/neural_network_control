@@ -1,6 +1,8 @@
 import logging
 import time
 import os, sys
+import numpy as np
+
 import configuration
 
 class Payload_Operations(object):
@@ -38,7 +40,7 @@ class Payload_Operations(object):
 
 	def read_parameters(self, path):
 		self.logger.debug("Reading: %s", path)
-		return "Payload_parameters"
+		return np.loadtxt(path, dtype = int).tolist()
 
 	def read_topology(self, path):
 		self.logger.debug("Reading: %s", path)

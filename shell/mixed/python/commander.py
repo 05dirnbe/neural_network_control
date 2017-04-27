@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import argparse, logging, sys
 import zmq
+
 import communication
 import configuration
 import serialization
@@ -35,7 +36,7 @@ class Commander(object):
 			self.logger.debug("Topic: %s", topic)
 			
 			payload = self.payload.read(path=argument,topic=topic)
-			self.logger.debug("Payload: %s", payload)
+			self.logger.debug("Payload loaded from: %s", argument)
 
 			self.send_command(command,payload)
 
@@ -55,7 +56,9 @@ class Commander(object):
 
 		payload_buffer = self.serializer.write_buffer(payload, topic = self.get_topic(command))
 		
-		self.controller.send("%s %s" % (command, payload_buffer))
+		message = command + " " + payload_buffer
+		# self.controller.send("%s %s" % (command, payload_buffer))
+		self.controller.send(message)
 
 		response = self.controller.recv()
 
@@ -79,7 +82,7 @@ if __name__ == '__main__':
 	# Setup for application logging
 	logging.basicConfig(level=logging.DEBUG, format='%(asctime)s: %(name)s: -- %(levelname)s -- %(message)s', filename="./log/commander.log", filemode="w")
 	console = logging.StreamHandler()
-	console.setLevel(logging.INFO)
+	console.setLevel(logging.DEBUG)
 	formatter = logging.Formatter('%(name)s: -- %(levelname)s -- %(message)s')
 	console.setFormatter(formatter)
 	logging.getLogger("commander").addHandler(console)
@@ -93,7 +96,7 @@ if __name__ == '__main__':
 	group.add_argument('-rw','--read_weights', action='store_true', help='tell controller to continuously read weights', )
 	group.add_argument('-ww','--write_weights', metavar="weight file", nargs='?', const = "config/weights/example.file", help='tell controller to write weights once', )
 	group.add_argument('-rp','--read_parameters', action='store_true', help='tell controller to continuously read parameters', )
-	group.add_argument('-wp','--write_parameters', metavar="parameters file", nargs='?', const = "config/parameters/example.file", help='tell controller to write parameters once', )
+	group.add_argument('-wp','--write_parameters', metavar="parameters file", nargs='?', const = "config/parameters/example.out", help='tell controller to write parameters once', )
 	group.add_argument('-rt','--read_topology', action='store_true', help='tell controller to continuously read network topology', )
 	group.add_argument('-wt','--write_topology', metavar="topology file", nargs='?', const = "config/topology/example.file", help='tell controller to write network topology once', )
 	group.add_argument('-rs','--read_spikes', action='store_true', help='tell controller to continuously read neuron spikes', )

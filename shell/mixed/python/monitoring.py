@@ -27,7 +27,7 @@ class TopicalMonitor(object):
 
 			while True:
 				
-				topic, data_buffer = self.data.recv().split()
+				topic, data_buffer = self.data.recv().split(" ", 1)
 				data = self.serializer.read_buffer(data_buffer, topic = topic)
 				self.logger_parent.debug("Recieved: %s", data)
 				self.handle(data)

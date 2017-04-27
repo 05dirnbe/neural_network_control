@@ -55,7 +55,7 @@ class Controller(object):
 				break
 
 			if self.commander in socks:		
-				self.command, payload = self.read_command(self.commander)
+				self.command, payload_buffer = self.read_command(self.commander)
 
 			if self.input_data in socks:
 				self.logger.debug("--------------- Handling Camera data --------------------")
@@ -64,18 +64,19 @@ class Controller(object):
 
 			if self.command:
 				self.logger.debug("--------------- Handling Command --------------------")
-				self.handle_command(self.command, payload)
+				self.handle_command(self.command, payload_buffer)
 				
 	def read_command(self, commander):
 
 		message = commander.recv()
-		command, payload = message.split()
+		command, payload_buffer = message.split(" ", 1)
+
 		self.logger.info("Recieved command: %s", command)
 		commander.send(command)
 		
-		return command, payload
+		return command, payload_buffer
 	
-	def handle_command(self, command, payload):
+	def handle_command(self, command, payload_buffer):
 
 		def remove_prefix(message, prefix):
 			if message.startswith(prefix):
@@ -98,6 +99,7 @@ class Controller(object):
 		if command in self.settings.write_commands:
 
 			topic = remove_prefix(command,"write_")
+			payload = self.serializer.read_buffer(payload_buffer, topic=topic)
 			self.write_fpga_data(payload, topic=topic)
 
 			return
@@ -122,7 +124,8 @@ class Controller(object):
 		# serialize stuff
 		data_buffer = self.serializer.write_buffer(data, topic)
 
-		output_data.send("%s %s" % (self.topics[topic], data_buffer))
+		message = topic + " " + data_buffer
+		output_data.send(message)
 		
 	def read_data(self, socket, topic):
 
@@ -153,7 +156,7 @@ if __name__ == '__main__':
 	# Setup for application logging
 	logging.basicConfig(level=logging.DEBUG, format='%(asctime)s: %(name)s: -- %(levelname)s -- %(message)s', filename="./log/controller.log", filemode="w")
 	console = logging.StreamHandler()
-	console.setLevel(logging.INFO)
+	console.setLevel(logging.DEBUG)
 	formatter = logging.Formatter('%(name)s: -- %(levelname)s -- %(message)s')
 	console.setFormatter(formatter)
 	logging.getLogger("controller").addHandler(console)

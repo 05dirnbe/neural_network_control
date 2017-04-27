@@ -1,5 +1,7 @@
 import logging
 import time
+import numpy as np
+
 import configuration
 
 class FPGA_Operations(object):
@@ -8,6 +10,7 @@ class FPGA_Operations(object):
 
 		self.logger = logging.getLogger("FPGA control")
 		self.state = None
+		self.parameters = np.zeros(0,dtype=int)
 
 	def prepare_read(self):
 
@@ -33,7 +36,7 @@ class FPGA_Operations(object):
 
 	def read_parameters(self):
 
-		return "FPGA_parameters"
+		return self.parameters
 
 	def read_spikes(self):
 
@@ -53,7 +56,7 @@ class FPGA_Operations(object):
 		return "FPGA_weights"
 
 	def write_parameters(self, data):
-
+		self.parameters = data
 		self.logger.info("Payload is: %s", data)
 		return "FPGA_parameters"
 
