@@ -16,6 +16,7 @@ class TopicalMonitor(object):
 		self.topic = topic
 
 		self.logger_parent = logging.getLogger("topical monitor")
+		self.logger_parent.setLevel(logging.INFO)
 
 		self.data = communication.connect_socket(self.context, socket_type = zmq.SUB, connection = self.settings.connections[connection])
 		self.data.setsockopt(zmq.SUBSCRIBE, self.settings.topics[topic])
@@ -28,7 +29,7 @@ class TopicalMonitor(object):
 				
 				topic, data_buffer = self.data.recv().split()
 				data = self.serializer.read_buffer(data_buffer, topic = topic)
-				self.logger_parent.info("Recieved: %s", data)
+				self.logger_parent.debug("Recieved: %s", data)
 				self.handle(data)
 				time.sleep(self.sleep)
 								
@@ -53,6 +54,7 @@ class FileLogger(TopicalMonitor):
 		super(FileLogger, self).__init__(topic, sleep , connection, settings, serializer)
 
 		self.logger = logging.getLogger(topic + " logger")
+		self.logger.setLevel(logging.DEBUG)
 
 		self.folder = os.path.join(path, topic)
 		self.log_file = os.path.join(self.folder, topic+"_store"+".txt")
@@ -72,7 +74,7 @@ class FileLogger(TopicalMonitor):
 	def handle(self, data):
 
 		self.store.write(data+"\n")
-		self.logger.info("Writing: %s", data)
+		self.logger.debug("Writing: %s", data)
 
 class Monitor(TopicalMonitor):
 
@@ -80,10 +82,11 @@ class Monitor(TopicalMonitor):
 
 		super(Monitor, self).__init__(topic, sleep , connection, settings, serializer)
 
-		self.logger = logging.getLogger(topic + " logger")
+		self.logger = logging.getLogger(topic + " monitor")
+		self.logger.setLevel(logging.DEBUG)
 
 		self.logger.info("Starting to monitor: %s", self.topic)
 
 	def handle(self, data):
 
-		self.logger.info("Plotting: %s", data)
+		self.logger.debug("Plotting: %s", data)
