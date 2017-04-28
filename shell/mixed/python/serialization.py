@@ -22,8 +22,17 @@ class Serializer_Operations(object):
 		return data
 
 	def deserialize_parameters(self, data_buffer):
-		
-		return list(bytearray(data_buffer))
+		# recieve a flatbuffer and deserialize it into an list of ints
+		assert type(data_buffer) == str
+	
+		array = Buffers.IntegerArray.IntegerArray.GetRootAsIntegerArray(data_buffer, 0)
+		# Get and test the `values` FlatBuffer `vector`.
+		data = array.ListLength() * [None]
+		for i in xrange(array.ListLength()):
+			data[i] = array.List(i)
+
+		self.logger.debug("Deserializing to obtain: %s", data)
+		return data
 
 	def deserialize_spikes(self, data_buffer):
 		data = data_buffer
@@ -36,7 +45,7 @@ class Serializer_Operations(object):
 		return data
 
 	def deserialize_camera(self, data_buffer):
-		# recieve a buffer and deserialize it into an int
+		# recieve a flatbuffer and deserialize it into an int
 		assert type(data_buffer) == str
 		
 		integer = Buffers.Integer.Integer.GetRootAsInteger(data_buffer, 0)
@@ -46,7 +55,9 @@ class Serializer_Operations(object):
 		return data
 
 	def deserialize_command(self, data_buffer):
-		
+		# deserialize flattbuffer into string
+		assert type(data_buffer) == str
+
 		string = Buffers.String.String.GetRootAsString(data_buffer, 0)
 		data = string.Message()
 
@@ -67,8 +78,28 @@ class Serializer_Operations(object):
 		return data_buffer
 
 	def serialize_parameters(self, data):
-		# turn list of ints into bytearray
-		return bytearray(data)
+		# turn list of ints into flatbuffer
+		assert all(type(item)==int for item in data)
+		
+		n = len(data)
+
+		builder = flatbuffers.Builder(0)
+		Buffers.IntegerArray.IntegerArrayStartListVector(builder, n)
+		# Note: Since we prepend the items, this loop iterates in reverse order.
+		for i in reversed(xrange(n)):
+			builder.PrependUint32(data[i])
+		l = builder.EndVector(n)
+
+		Buffers.IntegerArray.IntegerArrayStart(builder)
+		Buffers.IntegerArray.IntegerArrayAddList(builder, l)
+		l = Buffers.IntegerArray.IntegerArrayEnd(builder)
+		builder.Finish(l)
+
+		data_buffer = builder.Output()
+
+		self.logger.debug("Serializing: %s", data)
+
+		return data_buffer
 
 	def serialize_spikes(self, data):
 		data_buffer = data
@@ -96,7 +127,7 @@ class Serializer_Operations(object):
 		return data_buffer
 
 	def serialize_command(self, data):
-		
+		# turn string representation of command to flatbuffer
 		assert type(data) == str
 		
 		self.logger.debug("Serializing: %s", data)
