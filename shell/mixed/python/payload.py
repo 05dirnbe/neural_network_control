@@ -40,7 +40,7 @@ class Payload_Operations(object):
 
 	def read_parameters(self, path):
 		self.logger.debug("Reading: %s", path)
-		return np.loadtxt(path, dtype = int).tolist()
+		return np.loadtxt(path, delimiter=',', dtype = int).tolist()
 
 	def read_topology(self, path):
 		self.logger.debug("Reading: %s", path)
