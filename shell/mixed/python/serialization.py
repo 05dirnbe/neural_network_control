@@ -24,12 +24,12 @@ class Serializer_Operations(object):
 		return data
 
 	def deserialize_parameters(self, data_buffer):
-		# recieve a flatbuffer and deserialize it into an list of ints
+		# recieve a flatbuffer and deserialize it into an numpy array of ints
 		assert type(data_buffer) == str
 	
 		array = Buffers.IntegerArray.IntegerArray.GetRootAsIntegerArray(data_buffer, 0)
 		# Get and test the `values` FlatBuffer `vector`.
-		data = array.ListLength() * [None]
+		data = np.zeros(array.ListLength())
 		for i in xrange(array.ListLength()):
 			data[i] = array.List(i)
 
@@ -92,8 +92,9 @@ class Serializer_Operations(object):
 		return data_buffer
 
 	def serialize_parameters(self, data):
-		# turn list of ints into flatbuffer
-		assert all(type(item)==int for item in data)
+		# turn list an np array of ints into flatbuffer
+		assert isinstance(data, (np.ndarray, np.generic) )
+		assert data.dtype == int
 		
 		n = len(data)
 
