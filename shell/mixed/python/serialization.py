@@ -45,6 +45,11 @@ class Serializer_Operations(object):
 		self.logger.debug("Deserializing to obtain: %s", data)
 		return data
 
+	def deserialize_command(self, data_buffer):
+		data = data_buffer
+		self.logger.debug("Deserializing to obtain: %s", data)
+		return data
+
 	def dummy_deserialize(self, data_buffer):
 		
 		if data_buffer == "None":
@@ -85,6 +90,11 @@ class Serializer_Operations(object):
 		builder.Finish(integer)
 		data_buffer = builder.Output()
 
+		return data_buffer
+
+	def serialize_command(self, data):
+		data_buffer = data
+		self.logger.debug("Serializing: %s", data)
 		return data_buffer
 
 	def dummy_serialize(self, data):
@@ -130,6 +140,9 @@ class Serializer(Serializer_Adapter):
 		if topic == "camera":
 			return self.operator.deserialize_camera(data_buffer)
 
+		if topic == "command":
+			return self.operator.deserialize_command(data_buffer)
+
 		return self.operator.dummy_deserialize(data_buffer)
 
 	def write_buffer(self, data, topic=None):
@@ -150,6 +163,9 @@ class Serializer(Serializer_Adapter):
 			
 		if topic == "camera":
 			return self.operator.serialize_camera(data)
+
+		if topic == "command":
+			return self.operator.serialize_command(data)
 
 		return self.operator.dummy_serialize(data)
 

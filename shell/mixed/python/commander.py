@@ -55,12 +55,13 @@ class Commander(object):
 	def send_command(self, command, payload):
 
 		payload_buffer = self.serializer.write_buffer(payload, topic = self.get_topic(command))
-		
-		message = command + " " + payload_buffer
-		# self.controller.send("%s %s" % (command, payload_buffer))
-		self.controller.send(message)
+		command_buffer = self.serializer.write_buffer(command, topic = self.settings.topics["command"])
+	
+		message_buffer = command_buffer + " " + payload_buffer
+		self.controller.send(message_buffer)
 
-		response = self.controller.recv()
+		response_buffer = self.controller.recv()
+		response = self.serializer.read_buffer(response_buffer, topic = self.settings.topics["command"])
 
 		self.logger.debug("Controller executed command: %s", response)
 		assert(command == response)

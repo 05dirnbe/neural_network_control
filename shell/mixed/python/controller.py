@@ -69,11 +69,14 @@ class Controller(object):
 	def read_command(self, commander):
 
 		message = commander.recv()
-		command, payload_buffer = message.split(" ", 1)
+		command_buffer, payload_buffer = message.split(" ", 1)
+
+		command = self.serializer.read_buffer(command_buffer, topic = "command")
+		command_buffer = self.serializer.write_buffer(command, topic = self.settings.topics["command"])
+		commander.send(command_buffer)
 
 		self.logger.info("Recieved command: %s", command)
-		commander.send(command)
-		
+				
 		return command, payload_buffer
 	
 	def handle_command(self, command, payload_buffer):
