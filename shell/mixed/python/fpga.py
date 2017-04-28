@@ -11,6 +11,9 @@ class FPGA_Operations(object):
 		self.logger = logging.getLogger("FPGA control")
 		self.state = None
 		self.parameters = np.zeros(0,dtype=int)
+		self.weights = np.zeros((0,0),dtype=int)
+		self.topology = np.zeros((0,0),dtype=int)
+		self.spikes = [ (0,34), (1, 523)]
 
 	def prepare_read(self):
 
@@ -32,7 +35,7 @@ class FPGA_Operations(object):
 
 	def read_weights(self):
 
-		return "FPGA_weights"
+		return self.weights
 
 	def read_parameters(self):
 
@@ -40,18 +43,18 @@ class FPGA_Operations(object):
 
 	def read_spikes(self):
 
-		return "FPGA_spikes"
+		return self.spikes
 
 	def read_topology(self):
 
-		return "FPGA_topology"
+		return self.topology
 
 	def dummy_read(self):
 
 		return "FPGA_dummy"
 
 	def write_weights(self, data):
-
+		self.weights = data
 		self.logger.info("Payload is: %s", data)
 		return "FPGA_weights"
 
@@ -66,7 +69,7 @@ class FPGA_Operations(object):
 		return "FPGA_spikes"
 
 	def write_topology(self, data):
-
+		self.topology = data
 		self.logger.info("Payload is: %s", data)
 		return "FPGA_topology"
 

@@ -36,7 +36,7 @@ class Payload_Operations(object):
 		
 	def read_weights(self, path):
 		self.logger.debug("Reading: %s", path)
-		return "Payload_weights"
+		return np.loadtxt(path, delimiter=',', dtype = int)
 
 	def read_parameters(self, path):
 		self.logger.debug("Reading: %s", path)

@@ -19,9 +19,8 @@ class Serializer_Operations(object):
 		self.logger.setLevel(logging.DEBUG)
 		
 	def deserialize_weights(self, data_buffer):
-		data = data_buffer
-		self.logger.debug("Deserializing to obtain: %s", data)
-		return data
+		
+		return self.deserialize_topology(data_buffer)
 
 	def deserialize_parameters(self, data_buffer):
 		# recieve a flatbuffer and deserialize it into an numpy array of ints
@@ -87,9 +86,8 @@ class Serializer_Operations(object):
 		return data
 
 	def serialize_weights(self, data):
-		data_buffer = data
-		self.logger.debug("Serializing: %s", data)
-		return data_buffer
+		
+		return  self.serialize_topology(data)
 
 	def serialize_parameters(self, data):
 		# turn list an np array of ints into flatbuffer

@@ -95,7 +95,7 @@ if __name__ == '__main__':
 	group.add_argument('-q', '--quit', help='shutdown controller', action='store_true')
 	group.add_argument('-p','--pause', help='put controller in idle state and listen for further commands', action='store_true')
 	group.add_argument('-rw','--read_weights', action='store_true', help='tell controller to continuously read weights', )
-	group.add_argument('-ww','--write_weights', metavar="weight file", nargs='?', const = "config/weights/example.file", help='tell controller to write weights once', )
+	group.add_argument('-ww','--write_weights', metavar="weight file", nargs='?', const = "config/weights/example.out", help='tell controller to write weights once', )
 	group.add_argument('-rp','--read_parameters', action='store_true', help='tell controller to continuously read parameters', )
 	group.add_argument('-wp','--write_parameters', metavar="parameters file", nargs='?', const = "config/parameters/example.out", help='tell controller to write parameters once', )
 	group.add_argument('-rt','--read_topology', action='store_true', help='tell controller to continuously read network topology', )

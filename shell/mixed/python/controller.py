@@ -126,7 +126,7 @@ class Controller(object):
 
 		# serialize stuff
 		data_buffer = self.serializer.write_buffer(data, topic)
-
+		
 		message = topic + " " + data_buffer
 		output_data.send(message)
 		

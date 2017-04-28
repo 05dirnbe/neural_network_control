@@ -3,8 +3,7 @@ import numpy as np
 
 np.random.seed(0)
 
-path = "config/topology/example.out"
-
+path = "config/weights/example.out"
 
 data = np.random.randint(255, size=(2,5))
 
