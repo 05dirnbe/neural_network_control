@@ -99,7 +99,7 @@ if __name__ == '__main__':
 	group.add_argument('-rp','--read_parameters', action='store_true', help='tell controller to continuously read parameters', )
 	group.add_argument('-wp','--write_parameters', metavar="parameters file", nargs='?', const = "config/parameters/example.out", help='tell controller to write parameters once', )
 	group.add_argument('-rt','--read_topology', action='store_true', help='tell controller to continuously read network topology', )
-	group.add_argument('-wt','--write_topology', metavar="topology file", nargs='?', const = "config/topology/example.file", help='tell controller to write network topology once', )
+	group.add_argument('-wt','--write_topology', metavar="topology file", nargs='?', const = "config/topology/example.out", help='tell controller to write network topology once', )
 	group.add_argument('-rs','--read_spikes', action='store_true', help='tell controller to continuously read neuron spikes', )
 	args = parser.parse_args()
 	

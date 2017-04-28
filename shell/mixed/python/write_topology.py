@@ -8,6 +8,9 @@ path = "config/topology/example.out"
 
 data = np.random.randint(255, size=(2,21))
 
+print data
+print data.shape
+
 np.savetxt(path,data , delimiter=',', fmt="%d")   
 
 

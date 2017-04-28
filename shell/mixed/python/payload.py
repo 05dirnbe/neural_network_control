@@ -44,7 +44,7 @@ class Payload_Operations(object):
 
 	def read_topology(self, path):
 		self.logger.debug("Reading: %s", path)
-		return "Payload_topology"
+		return np.loadtxt(path, delimiter=',', dtype = int)
 
 	def dummy_read(self, path):
 		self.logger.debug("Nothing to read ...")

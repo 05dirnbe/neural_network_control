@@ -1,7 +1,9 @@
 import logging
+import numpy as np
+import flatbuffers
+
 import configuration
 
-import flatbuffers
 import Buffers.Integer
 import Buffers.IntegerArray
 import Buffers.IntegerMatrix
@@ -40,7 +42,19 @@ class Serializer_Operations(object):
 		return data
 
 	def deserialize_topology(self, data_buffer):
-		data = data_buffer
+		# deserialize flatbuffer into numpy matrix of ints
+		assert type(data_buffer) == str
+
+		try:
+
+			container = Buffers.IntegerMatrix.IntegerMatrix.GetRootAsIntegerMatrix(data_buffer, 0)
+
+			flat_matrix = np.array([ container.List(i) for i in xrange(container.ListLength()) ])
+			data = flat_matrix.reshape(container.N(),container.M())
+
+		except Exception as e:
+			print e
+
 		self.logger.debug("Deserializing to obtain: %s", data)
 		return data
 
@@ -107,7 +121,33 @@ class Serializer_Operations(object):
 		return data_buffer
 
 	def serialize_topology(self, data):
-		data_buffer = data
+		# serialize numpy 2d array of ints to flatbuffer
+		assert isinstance(data, (np.ndarray, np.generic) )
+		assert len(data.shape) == 2
+		assert data.dtype == int
+
+		n, m = data.shape
+		flat_matrix = data.flatten()
+
+		# Serialize the FlatBuffer data.
+		# Note: Since we prepend the items, this loop iterates in reverse order.
+		builder = flatbuffers.Builder(0)
+		Buffers.IntegerMatrix.IntegerMatrixStartListVector(builder, len(flat_matrix))
+		for value in reversed(flat_matrix):
+			builder.PrependUint32(value)
+		data = builder.EndVector(len(flat_matrix))
+
+		Buffers.IntegerMatrix.IntegerMatrixStart(builder)
+
+		Buffers.IntegerMatrix.IntegerMatrixAddN(builder, n)
+		Buffers.IntegerMatrix.IntegerMatrixAddM(builder, m)
+		Buffers.IntegerMatrix.IntegerMatrixAddList(builder, data)
+		l = Buffers.IntegerMatrix.IntegerMatrixEnd(builder)
+
+		builder.Finish(l)
+
+		data_buffer = builder.Output()
+
 		self.logger.debug("Serializing: %s", data)
 		return data_buffer
 
