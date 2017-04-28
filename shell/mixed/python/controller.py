@@ -127,14 +127,13 @@ class Controller(object):
 		# serialize stuff
 		data_buffer = self.serializer.write_buffer(data, topic)
 		
-		message = topic + " " + data_buffer
-		output_data.send(message)
+		message_buffer = topic + " " + data_buffer
+		output_data.send(message_buffer)
 		
 	def read_data(self, socket, topic):
 
 		data_buffer = socket.recv()
 		data = self.serializer.read_buffer(data_buffer,topic=topic)
-		assert type(data) == int
 		self.logger.debug("Recieved %s data: %s", topic, data)
 		return data
 		
@@ -152,6 +151,7 @@ def main():
 		controller = Controller()
 		controller.serve_forever()
 	except Exception as e:
+		print e
 		logging.exception("Something bad happened in the controller. You might want to check the log in /log/controller.log")
 
 if __name__ == '__main__':

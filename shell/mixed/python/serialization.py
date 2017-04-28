@@ -28,7 +28,7 @@ class Serializer_Operations(object):
 	
 		array = Buffers.IntegerArray.IntegerArray.GetRootAsIntegerArray(data_buffer, 0)
 		# Get and test the `values` FlatBuffer `vector`.
-		data = np.zeros(array.ListLength())
+		data = np.zeros(array.ListLength(), dtype = int)
 		for i in xrange(array.ListLength()):
 			data[i] = array.List(i)
 
@@ -86,11 +86,12 @@ class Serializer_Operations(object):
 		return data
 
 	def serialize_weights(self, data):
-		
+
 		return  self.serialize_topology(data)
 
 	def serialize_parameters(self, data):
 		# turn list an np array of ints into flatbuffer
+		print data.dtype
 		assert isinstance(data, (np.ndarray, np.generic) )
 		assert data.dtype == int
 		
@@ -115,7 +116,8 @@ class Serializer_Operations(object):
 		return data_buffer
 
 	def serialize_spikes(self, data):
-		data_buffer = data
+		
+		
 		self.logger.debug("Serializing: %s", data)
 		return data_buffer
 
