@@ -1,6 +1,14 @@
 import logging
 import configuration
 
+import flatbuffers
+import Buffers.Integer
+import Buffers.IntegerArray
+import Buffers.IntegerMatrix
+import Buffers.SpikesArray
+import Buffers.String
+
+
 class Serializer_Operations(object):
 
 	def __init__(self):
@@ -28,10 +36,14 @@ class Serializer_Operations(object):
 		return data
 
 	def deserialize_camera(self, data_buffer):
-		# recieve an str and turn it to int
+		# recieve a buffer and deserialize it into an int
 		assert type(data_buffer) == str
-		self.logger.debug("Deserializing to obtain: %s", data_buffer)
-		return int(data_buffer)
+		
+		integer = Buffers.Integer.Integer.GetRootAsInteger(data_buffer, 0)
+		data = integer.Value()
+
+		self.logger.debug("Deserializing to obtain: %s", data)
+		return data
 
 	def dummy_deserialize(self, data_buffer):
 		
@@ -61,10 +73,19 @@ class Serializer_Operations(object):
 		return data_buffer
 
 	def serialize_camera(self, data):
-		# here we want to serialize an int to str
+		# here we want to serialize an int to a flatbuffer
 		assert type(data) == int
 		self.logger.debug("Serializing: %d", data)
-		return str(data)
+
+		builder = flatbuffers.Builder(0)
+		Buffers.Integer.IntegerStart(builder)
+		Buffers.Integer.IntegerAddValue(builder,data)
+		integer = Buffers.Integer.IntegerEnd(builder)
+		
+		builder.Finish(integer)
+		data_buffer = builder.Output()
+
+		return data_buffer
 
 	def dummy_serialize(self, data):
 		data_buffer = "None"
