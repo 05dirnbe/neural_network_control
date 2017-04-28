@@ -46,7 +46,10 @@ class Serializer_Operations(object):
 		return data
 
 	def deserialize_command(self, data_buffer):
-		data = data_buffer
+		
+		string = Buffers.String.String.GetRootAsString(data_buffer, 0)
+		data = string.Message()
+
 		self.logger.debug("Deserializing to obtain: %s", data)
 		return data
 
@@ -93,8 +96,21 @@ class Serializer_Operations(object):
 		return data_buffer
 
 	def serialize_command(self, data):
-		data_buffer = data
+		
+		assert type(data) == str
+		
 		self.logger.debug("Serializing: %s", data)
+
+		builder = flatbuffers.Builder(0)
+		message = builder.CreateString(data)
+
+		Buffers.String.StringStart(builder)
+		Buffers.String.StringAddMessage(builder,message)
+		string = Buffers.String.StringEnd(builder)
+		builder.Finish(string)
+
+		data_buffer = builder.Output()
+
 		return data_buffer
 
 	def dummy_serialize(self, data):
