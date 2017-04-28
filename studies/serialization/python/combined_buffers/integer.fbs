@@ -1,0 +1,10 @@
+// Example IDL file for our monster's schema.
+namespace Buffer;
+
+table Integer {
+ 
+  value:int = 0;
+}
+  
+root_type Integer;
+
