@@ -10,6 +10,10 @@ class FPGA_Operations(object):
 
 		self.logger = logging.getLogger("FPGA control")
 		self.state = None
+		
+		# here all constants related to FPGA operation go
+
+		# these are dummy values for testing flatbuffers
 		self.parameters = np.zeros(0,dtype=int)
 		self.weights = np.zeros((0,0),dtype=int)
 		self.topology = np.zeros((0,0),dtype=int)
@@ -34,19 +38,19 @@ class FPGA_Operations(object):
 		self.logger.info("New FPGA state: %s", self.state)
 
 	def read_weights(self):
-
+		# this function must return a numpy 2d array of type int
 		return self.weights
 
 	def read_parameters(self):
-
+		# this function must return a numpy 1d array of type int
 		return self.parameters
 
 	def read_spikes(self):
-
+		# this function must return a numpy 2d array of type int
 		return self.spikes
 
 	def read_topology(self):
-
+		# this function must return a numpy 2d array of type int
 		return self.topology
 
 	def dummy_read(self):
@@ -59,27 +63,28 @@ class FPGA_Operations(object):
 		return "FPGA_weights"
 
 	def write_parameters(self, data):
+		# this function recieves a np 1d array of type int
 		self.parameters = data
 		self.logger.info("Payload is: %s", data)
 		return "FPGA_parameters"
 
 	def write_spikes(self, data):
-
+		# this function recieves a np 2d array of type int
 		self.logger.info("Payload is: %s", data)
 		return "FPGA_spikes"
 
 	def write_topology(self, data):
+		# this function recieves a np 2d array of type int
 		self.topology = data
 		self.logger.info("Payload is: %s", data)
 		return "FPGA_topology"
 
 	def write_camera(self, data):
-
+		# this function recieves an int
 		self.logger.info("Payload is: %s", data)
 		return "FPGA_camera_data"
 
 	def dummy_write(self, data):
-
 		self.logger.info("Payload is: %s", data)
 		return "FPGA_dummy"
 
