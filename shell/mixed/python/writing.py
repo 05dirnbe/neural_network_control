@@ -13,13 +13,15 @@ class TopicalWriter(object):
 		self.payload = payload
 		self.topic = topic
 		self.config_folder = config_folder
+		self.path = os.path.join(self.config_folder, self.topic)
 
 		self.write_topics = ["weights", "parameters", "topology"]
 
-		if not topic in self.write_topics:
-			print "Selected topic not implemented for writing."
-			sys.exit()
+		# here you put constants and variables that all the parameter writes need
 
+		if not topic in self.write_topics:
+			print "Selected topic not implemented for writing. Aborting."
+			sys.exit()
 
 class TopologyWriter(TopicalWriter):
 
@@ -27,8 +29,8 @@ class TopologyWriter(TopicalWriter):
 
 		super(TopologyWriter, self).__init__("topology", config_folder, settings, payload)
 
-		self.path = os.path.join(self.config_folder, self.topic)
-		
+		# here you put constants and variables that are specific to a topic
+
 	def prepare_data(self):
 
 		# here all the valdimir code goes creating the topology data for the configuration file
@@ -49,9 +51,9 @@ class WeightsWriter(TopicalWriter):
 	def __init__(self, config_folder = "config",  settings = configuration.Config(), payload = payload.Payload()):
 
 		super(WeightsWriter, self).__init__("weights", config_folder, settings, payload)
-
-		self.path = os.path.join(self.config_folder, self.topic)
 		
+		# here you put constants and variables that are specific to a topic
+
 	def prepare_data(self):
 
 		# here all the valdimir code goes creating the topology data for the configuration file
@@ -72,9 +74,9 @@ class ParametersWriter(TopicalWriter):
 	def __init__(self, config_folder = "config",  settings = configuration.Config(), payload = payload.Payload()):
 
 		super(ParametersWriter, self).__init__("weights", config_folder, settings, payload)
-
-		self.path = os.path.join(self.config_folder, self.topic)
 		
+		# here you put constants and variables that are specific to a topic
+
 	def prepare_data(self):
 
 		# here all the valdimir code goes creating the topology data for the configuration file
