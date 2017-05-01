@@ -8,7 +8,7 @@ payload = payload.Payload()
 topic = "parameters"
 path = "config/parameters/example.out"
 
-# prepare data here. Data must be a np array of type int
+# prepare the vladimir data here. Call whatever other functions are needed. 
 data = np.random.randint(256, size=5)
-# write to file using the payload api
+# write to file using the payload api. Data must be a 1d np array of type int
 payload.write(data, path, topic)

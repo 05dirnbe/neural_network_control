@@ -8,7 +8,7 @@ payload = Payload()
 topic = "weights"
 path = "config/weights/example.out"
 
-# prepare data here. Data must be a np array of type int
+# prepare the vladimir data here. Call whatever other functions are needed. 
 data = np.random.randint(255, size=(2,5))
-# write to file using the payload api
+# write to file using the payload api. Data must be a 2d np array of type int
 payload.write(data, path, topic)
