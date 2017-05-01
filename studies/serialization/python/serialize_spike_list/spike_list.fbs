@@ -1,0 +1,11 @@
+
+namespace Buffer;
+
+table Spike {
+  address:int;
+  timestamp:int;
+}
+
+table SpikesArray {
+  list:[Spike];   // Vector of int.
+}
