@@ -7,17 +7,32 @@ import flatbuffers
 class Spike(object):
     __slots__ = ['_tab']
 
+    @classmethod
+    def GetRootAsSpike(cls, buf, offset):
+        n = flatbuffers.encode.Get(flatbuffers.packer.uoffset, buf, offset)
+        x = Spike()
+        x.Init(buf, n + offset)
+        return x
+
     # Spike
     def Init(self, buf, pos):
         self._tab = flatbuffers.table.Table(buf, pos)
 
     # Spike
-    def Address(self): return self._tab.Get(flatbuffers.number_types.Int32Flags, self._tab.Pos + flatbuffers.number_types.UOffsetTFlags.py_type(0))
-    # Spike
-    def Timestamp(self): return self._tab.Get(flatbuffers.number_types.Int32Flags, self._tab.Pos + flatbuffers.number_types.UOffsetTFlags.py_type(4))
+    def Address(self):
+        o = flatbuffers.number_types.UOffsetTFlags.py_type(self._tab.Offset(4))
+        if o != 0:
+            return self._tab.Get(flatbuffers.number_types.Int32Flags, o + self._tab.Pos)
+        return 0
 
-def CreateSpike(builder, address, timestamp):
-    builder.Prep(4, 8)
-    builder.PrependInt32(timestamp)
-    builder.PrependInt32(address)
-    return builder.Offset()
+    # Spike
+    def Timestamp(self):
+        o = flatbuffers.number_types.UOffsetTFlags.py_type(self._tab.Offset(6))
+        if o != 0:
+            return self._tab.Get(flatbuffers.number_types.Int32Flags, o + self._tab.Pos)
+        return 0
+
+def SpikeStart(builder): builder.StartObject(2)
+def SpikeAddAddress(builder, address): builder.PrependInt32Slot(0, address, 0)
+def SpikeAddTimestamp(builder, timestamp): builder.PrependInt32Slot(1, timestamp, 0)
+def SpikeEnd(builder): return builder.EndObject()
