@@ -1,17 +1,14 @@
 import json
 import numpy as np
+from payload import Payload
 
 np.random.seed(0)
+payload = Payload()
 
+topic = "topology"
 path = "config/topology/example.out"
 
-
+# prepare data here. Data must be a np array of type int
 data = np.random.randint(255, size=(2,5))
-
-print data
-print data.shape
-
-np.savetxt(path,data , delimiter=',', fmt="%d")   
-
-
-a = np.loadtxt(path, delimiter=',', dtype = int)
+# write to file using the payload api
+payload.write(data, path, topic)

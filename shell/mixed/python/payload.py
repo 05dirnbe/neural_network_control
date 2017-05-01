@@ -32,8 +32,10 @@ class Payload_Operations(object):
 
 		if not os.path.exists(directory):
 			self.logger.info("Creating directory: %s", directory)
-    		os.makedirs(directory)
+			os.makedirs(directory)
 		
+		pass
+
 	def read_weights(self, path):
 		self.logger.debug("Reading: %s", path)
 		return np.loadtxt(path, delimiter=',', dtype = int)
@@ -53,17 +55,18 @@ class Payload_Operations(object):
 	def write_weights(self, data, path):
 
 		self.logger.debug("Writing: %s", path)
-		return "Payload_weights"
+		return np.savetxt(path, data , delimiter=',', fmt="%d")   
 
 	def write_parameters(self, data, path):
 
 		self.logger.debug("Writing: %s", path)
-		return "Payload_parameters"
+		print "here"
+		return np.savetxt(path, data , delimiter=',', fmt="%d")
 
 	def write_topology(self, data, path):
 
 		self.logger.debug("Writing: %s", path)
-		return "Payload_topology"
+		return np.savetxt(path, data , delimiter=',', fmt="%d")
 
 	def dummy_write(self, data, path):
 
@@ -113,19 +116,19 @@ class Payload(Payload_Adapter):
 		if topic == "weights":
 			self.logger.debug("Requesting Payload write: %s", topic )
 			self.operator.prepare_write(path)
-			self.operator.write_weights(data, path)
+			# self.operator.write_weights(data, path)
 			return
 
 		if topic == "parameters":
 			self.logger.debug("Requesting Payload write: %s", topic )
 			self.operator.prepare_write(path)
-			self.operator.write_parameters(data, path)
+			# self.operator.write_parameters(data, path)
 			return
 
 		if topic == "topology":
 			self.logger.debug("Requesting Payload write: %s", topic )
 			self.operator.prepare_write(path)
-			self.operator.write_topology(data, path)
+			# self.operator.write_topology(data, path)
 			return
 
 		self.operator.dummy_write(data, path)
