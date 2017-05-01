@@ -53,17 +53,25 @@ class Payload_Operations(object):
 		return None
 
 	def write_weights(self, data, path):
+		assert isinstance(data, (np.ndarray, np.generic) )
+		assert len(data.shape) == 2
+		assert data.dtype == int
 
 		self.logger.debug("Writing: %s", path)
 		return np.savetxt(path, data , delimiter=',', fmt="%d")   
 
 	def write_parameters(self, data, path):
+		assert isinstance(data, (np.ndarray, np.generic) )
+		assert data.dtype == int
 
 		self.logger.debug("Writing: %s", path)
 		print "here"
 		return np.savetxt(path, data , delimiter=',', fmt="%d")
 
 	def write_topology(self, data, path):
+		assert isinstance(data, (np.ndarray, np.generic) )
+		assert len(data.shape) == 2
+		assert data.dtype == int
 
 		self.logger.debug("Writing: %s", path)
 		return np.savetxt(path, data , delimiter=',', fmt="%d")

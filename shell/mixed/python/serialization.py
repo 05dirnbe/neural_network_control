@@ -100,7 +100,6 @@ class Serializer_Operations(object):
 
 	def serialize_parameters(self, data, initial_buffer_size = 1024):
 		# turn list an np array of ints into flatbuffer
-		print data.dtype
 		assert isinstance(data, (np.ndarray, np.generic) )
 		assert data.dtype == int
 		
