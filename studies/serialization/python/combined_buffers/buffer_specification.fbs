@@ -21,7 +21,7 @@ table String {
   message:string;
 }
 
-struct Spike {
+table Spike {
   address:int;
   timestamp:int;
 }
