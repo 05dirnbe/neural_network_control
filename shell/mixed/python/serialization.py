@@ -1,4 +1,5 @@
 import logging
+from collections import defaultdict
 import numpy as np
 import flatbuffers
 
@@ -7,6 +8,7 @@ import configuration
 import Buffers.Integer
 import Buffers.IntegerArray
 import Buffers.IntegerMatrix
+import Buffers.Spike
 import Buffers.SpikesArray
 import Buffers.String
 
@@ -19,7 +21,7 @@ class Serializer_Operations(object):
 		self.logger.setLevel(logging.DEBUG)
 		
 	def deserialize_weights(self, data_buffer):
-		
+		# weights and topology have the same buffer layout
 		return self.deserialize_topology(data_buffer)
 
 	def deserialize_parameters(self, data_buffer):
@@ -36,7 +38,19 @@ class Serializer_Operations(object):
 		return data
 
 	def deserialize_spikes(self, data_buffer):
-		data = data_buffer
+		# deserialize flatbuffer into lists of ints stored in a dict
+		assert type(data_buffer) == str
+
+		data = defaultdict(list)
+
+		l = Buffers.SpikesArray.SpikesArray.GetRootAsSpikesArray(data_buffer, 0)
+		# Get and test the `values` FlatBuffer `vector`
+
+		for i in xrange(l.ListLength()):
+			spike = l.List(i)
+			data["timestamp"].append(spike.Timestamp())
+			data["address"].append(spike.Address()) 
+
 		self.logger.debug("Deserializing to obtain: %s", data)
 		return data
 
@@ -44,15 +58,10 @@ class Serializer_Operations(object):
 		# deserialize flatbuffer into numpy matrix of ints
 		assert type(data_buffer) == str
 
-		try:
+		container = Buffers.IntegerMatrix.IntegerMatrix.GetRootAsIntegerMatrix(data_buffer, 0)
 
-			container = Buffers.IntegerMatrix.IntegerMatrix.GetRootAsIntegerMatrix(data_buffer, 0)
-
-			flat_matrix = np.array([ container.List(i) for i in xrange(container.ListLength()) ])
-			data = flat_matrix.reshape(container.N(),container.M())
-
-		except Exception as e:
-			print e
+		flat_matrix = np.array([ container.List(i) for i in xrange(container.ListLength()) ])
+		data = flat_matrix.reshape(container.N(),container.M())
 
 		self.logger.debug("Deserializing to obtain: %s", data)
 		return data
@@ -86,7 +95,7 @@ class Serializer_Operations(object):
 		return data
 
 	def serialize_weights(self, data):
-
+		# weights and topology have the same containers: a np 2darray containing ints
 		return  self.serialize_topology(data)
 
 	def serialize_parameters(self, data):
@@ -116,8 +125,41 @@ class Serializer_Operations(object):
 		return data_buffer
 
 	def serialize_spikes(self, data):
-		
-		
+		assert isinstance(data, (np.ndarray, np.generic) )
+		assert len(data.shape) == 2
+		assert data.shape[1] == 2
+		assert data.dtype == int
+
+		n = data.shape[0]
+		spikes = []
+		builder = flatbuffers.Builder(0)
+
+		# first we build the n spikes themselves
+		for i in xrange(n):
+
+			Buffers.Spike.SpikeStart(builder)
+			Buffers.Spike.SpikeAddTimestamp(builder,data[i][0])
+			Buffers.Spike.SpikeAddAddress(builder,data[i][1])
+			spike = Buffers.Spike.SpikeEnd(builder)
+			spikes.append(spike)
+
+		# next we build a vector that holds the spikes
+		Buffers.SpikesArray.SpikesArrayStartListVector(builder, n)
+
+		for s in reversed(spikes):
+			builder.PrependUOffsetTRelative(s)
+
+		spikes_offset = builder.EndVector(n)
+
+		# then we add the vector to the buffer
+		Buffers.SpikesArray.SpikesArrayStart(builder)
+		Buffers.SpikesArray.SpikesArrayAddList(builder, spikes_offset)
+		l = Buffers.SpikesArray.SpikesArrayEnd(builder)
+
+		builder.Finish(l)
+
+		data_buffer = builder.Output()
+
 		self.logger.debug("Serializing: %s", data)
 		return data_buffer
 

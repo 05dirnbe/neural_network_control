@@ -13,7 +13,7 @@ class FPGA_Operations(object):
 		self.parameters = np.zeros(0,dtype=int)
 		self.weights = np.zeros((0,0),dtype=int)
 		self.topology = np.zeros((0,0),dtype=int)
-		self.spikes = [ (0,34), (1, 523)]
+		self.spikes = np.array([ (0,34), (1, 523)])
 
 	def prepare_read(self):
 
