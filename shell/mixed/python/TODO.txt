@@ -1,2 +1,3 @@
 Problems to be addressed in improved versions:
 
+Add the real FPGA operations to the fpga class.
