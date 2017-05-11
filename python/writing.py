@@ -73,7 +73,7 @@ class ParametersWriter(TopicalWriter):
 
 	def __init__(self, config_folder = "config",  settings = configuration.Config(), payload = payload.Payload()):
 
-		super(ParametersWriter, self).__init__("weights", config_folder, settings, payload)
+		super(ParametersWriter, self).__init__("parameters", config_folder, settings, payload)
 		
 		# here you put constants and variables that are specific to a topic
 

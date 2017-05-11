@@ -20,11 +20,11 @@ class Serializer_Operations(object):
 		self.logger = logging.getLogger("serializer")
 		self.logger.setLevel(logging.DEBUG)
 		
-	def deserialize_weights(self, data_buffer, initial_buffer_size = 1024):
+	def deserialize_weights(self, data_buffer, initial_buffer_size = 0):
 		# weights and topology have the same buffer layout
 		return self.deserialize_topology(data_buffer, initial_buffer_size)
 
-	def deserialize_parameters(self, data_buffer, initial_buffer_size = 1024):
+	def deserialize_parameters(self, data_buffer, initial_buffer_size = 0):
 		# recieve a flatbuffer and deserialize it into an numpy array of ints
 		assert type(data_buffer) == str
 	
@@ -37,7 +37,7 @@ class Serializer_Operations(object):
 		self.logger.debug("Deserializing to obtain: %s", data)
 		return data
 
-	def deserialize_spikes(self, data_buffer, initial_buffer_size = 1024):
+	def deserialize_spikes(self, data_buffer, initial_buffer_size = 0):
 		# deserialize flatbuffer into lists of ints stored in a dict
 		assert type(data_buffer) == str
 
@@ -54,7 +54,7 @@ class Serializer_Operations(object):
 		self.logger.debug("Deserializing to obtain: %s", data)
 		return data
 
-	def deserialize_topology(self, data_buffer, initial_buffer_size = 1024):
+	def deserialize_topology(self, data_buffer, initial_buffer_size = 0):
 		# deserialize flatbuffer into numpy matrix of ints
 		assert type(data_buffer) == str
 
@@ -66,7 +66,7 @@ class Serializer_Operations(object):
 		self.logger.debug("Deserializing to obtain: %s", data)
 		return data
 
-	def deserialize_camera(self, data_buffer, initial_buffer_size = 1024):
+	def deserialize_camera(self, data_buffer, initial_buffer_size = 0):
 		# recieve a flatbuffer and deserialize it into an int
 		assert type(data_buffer) == str
 		
@@ -76,7 +76,7 @@ class Serializer_Operations(object):
 		self.logger.debug("Deserializing to obtain: %s", data)
 		return data
 
-	def deserialize_command(self, data_buffer, initial_buffer_size = 1024):
+	def deserialize_command(self, data_buffer, initial_buffer_size = 0):
 		# deserialize flattbuffer into string
 		assert type(data_buffer) == str
 
