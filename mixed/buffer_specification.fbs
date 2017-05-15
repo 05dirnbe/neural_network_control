@@ -1,0 +1,31 @@
+// Example IDL file for our monster's schema.
+
+namespace Buffers;
+
+table Integer {
+ 
+  value:int = 0;
+}
+
+table IntegerArray {
+  list:[int];   // Vector of int.
+}
+
+table IntegerMatrix {
+  n:int;
+  m:int;
+  list:[int];   // Vector of int.
+}
+
+table String {
+  message:string;
+}
+
+table Spike {
+  address:int;
+  timestamp:int;
+}
+
+table SpikesArray {
+  list:[Spike];   // Vector of int.
+}

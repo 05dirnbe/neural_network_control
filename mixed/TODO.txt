@@ -1,0 +1,5 @@
+Problems to be addressed in improved versions:
+
+* Add the real FPGA operations to the fpga class.
+* Hook up real camera data to the data_input SUB socket of controller.
+* Add the real code for config file writers.
