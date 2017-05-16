@@ -5,6 +5,7 @@
 
 # include "configuration.hpp"
 # include "communication.hpp"
+# include "fpga.hpp"
 
 using namespace std;
 using namespace communication;
@@ -24,5 +25,12 @@ int main(){
 	cout << ZMQ_REP << endl;
 	
 	connect_socket(ZMQ_REP, connections["controller"]);
+
+	fpga::FPGA<> a;
+
+	parameters_t data = 10;
+
+	a.write(data, "topology");
+	cout << a.read("topology") << endl;
 
 }
