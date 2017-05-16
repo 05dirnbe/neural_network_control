@@ -16,15 +16,18 @@ namespace configuration {
     typedef data_t weights_t;
     typedef data_t spikes_t;
     typedef data_t topology_t;
+    typedef const string command_t;
+    
+    typedef const unsigned int buffer_t;
 
-    typedef const string topic_key_t;
+    typedef command_t topic_key_t;
     typedef const unsigned int topic_value_t;
 
 	const char *rc[] = {"read_weights", "read_parameters", "read_spikes", "read_topology"};
 	const char *wc[] = {"write_weights", "write_parameters", "write_topology"};
 	
-	const set< const string> read_commands(rc, rc + sizeof(rc) / sizeof(*rc));
-	const set< const string> write_commands(wc, wc + sizeof(wc) / sizeof(*wc));
+	const set< command_t > read_commands(rc, rc + sizeof(rc) / sizeof(*rc));
+	const set< command_t > write_commands(wc, wc + sizeof(wc) / sizeof(*wc));
 
 	string desktop_ip("localhost");
 	string raspberry_ip("localhost");
@@ -39,7 +42,7 @@ namespace configuration {
     { string("command"), 6 },
     { string("empty"), 7 }};
 
-	map< const string, const string> connections = {
+	map< command_t, const string> connections = {
     { string("commander"), string("tcp://" + ip + ":5555") },
     { string("controller"), string("tcp://" + ip + ":5555") },
     { string("input_data"), string("tcp://" + ip + ":5556") },

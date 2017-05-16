@@ -1,7 +1,7 @@
 #ifndef FPGA_HPP
 #define FPGA_HPP
 
-#include <set>
+#include <string>
 
 #include "configuration.hpp"
 
