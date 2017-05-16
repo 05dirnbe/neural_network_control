@@ -2,35 +2,44 @@
 #define SERIALIZATION_HPP
 
 #include <string>
+#include <zmq.hpp>
 
 #include "configuration.hpp"
+
 
 namespace serialization {
 
     using namespace std;
+
     
     class Serializer_Operations {
 
         public:
 
-            const configuration::matrix_t deserialize_matrix( const configuration::buffer_t buffer) const {
+            const configuration::matrix_t deserialize_matrix( zmq::message_t & buffer) const {
                 return 10;
             }
 
-            const configuration::buffer_t serialize_matrix(const configuration::matrix_t data ) const {
-                return 100000;
+            zmq::message_t serialize_matrix(const configuration::matrix_t data ) const {
+                zmq::message_t empty_buffer;
+                return empty_buffer;
             }
 
-            const configuration::command_t deserialize_command( const configuration::buffer_t buffer) const {
-                return string("command");
+            const configuration::command_t deserialize_command( zmq::message_t& buffer) const {
+                return string(static_cast<char*>(buffer.data()), buffer.size());
             }
 
-            const configuration::buffer_t serialize_command(const configuration::command_t data ) const {
-                return 11;
+            zmq::message_t serialize_command(const string & command ) const {
+                
+                zmq::message_t buffer(command.size());
+                memcpy(buffer.data (), command.c_str(), command.size());
+                
+                return buffer;
             }
 
-            const configuration::buffer_t serialize_empty() const {
-                return 0;
+            zmq::message_t serialize_empty() const {
+                zmq::message_t empty_buffer;
+                return empty_buffer;
             }
 
             const configuration::data_t deserialize_empty_data() const {
@@ -62,7 +71,7 @@ namespace serialization {
 
             Serializer() : Serializer_Adapter<Operator>( Operator() ) {}
 
-            configuration::buffer_t serialize_data( const configuration::data_t data, const configuration::topic_key_t topic) {
+            zmq::message_t serialize_data( const configuration::data_t & data, const configuration::topic_key_t topic) {
 
                 if (topic == "spikes"){
                     return super::operations.serialize_matrix(data);
@@ -83,7 +92,7 @@ namespace serialization {
                 }
             }
 
-            configuration::data_t deserialize_data( const configuration::buffer_t buffer, const configuration::topic_key_t topic) {
+            configuration::data_t deserialize_data( zmq::message_t & buffer, const configuration::topic_key_t topic) {
 
                 if (topic == "spikes"){
                     return super::operations.deserialize_matrix(buffer);
@@ -104,7 +113,7 @@ namespace serialization {
                 }
             }
 
-            configuration::buffer_t serialize_command( const configuration::command_t data, const configuration::topic_key_t topic) {
+            zmq::message_t serialize_command( const string & data, const configuration::topic_key_t topic) {
 
                 if (topic == "command"){
                     return super::operations.serialize_command(data);
@@ -116,7 +125,7 @@ namespace serialization {
                 }  
             }
 
-            configuration::command_t deserialize_command( const configuration::buffer_t buffer, const configuration::topic_key_t topic) {
+            const string deserialize_command( zmq::message_t & buffer, const configuration::topic_key_t topic) {
 
                 if (topic == "command"){
                     return super::operations.deserialize_command(buffer);
@@ -126,7 +135,9 @@ namespace serialization {
                     throw runtime_error(msg);
                     return super::operations.deserialize_empty_command();   
                 }  
-            }   
+            } 
+
+
     };
 }
 

@@ -4,6 +4,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <zmq.hpp>
 
 namespace configuration {
 
@@ -18,7 +19,7 @@ namespace configuration {
     typedef data_t topology_t;
     typedef const string command_t;
     
-    typedef const unsigned int buffer_t;
+    typedef zmq::message_t buffer_t;
 
     typedef command_t topic_key_t;
     typedef const unsigned int topic_value_t;

@@ -114,7 +114,7 @@ namespace fpga {
                     return;
                 }
                 else {
-                    string msg("Error: Writing topic '" + topic + "' from FPGA not implemented.");
+                    string msg("Error: Writing topic '" + topic + "' to FPGA not implemented.");
                     throw runtime_error(msg);
                     return;   
                 }

@@ -20,5 +20,9 @@ all: $(TARGET)
 $(TARGET): $(TARGET).cpp
 	$(CC) $(CFLAGS) $(ZMQ_INCLUDES) -o $(TARGET) $(TARGET).cpp
 
+commander:
+
+	$(CC) $(CFLAGS) $(ZMQ_INCLUDES) -o commander commander.cpp
+
 clean:
 	$(RM) $(TARGET)
