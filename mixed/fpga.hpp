@@ -15,7 +15,7 @@ namespace fpga {
 
         public:
 
-            FPGA_Operations() : state(fpga::undefined) {}
+            FPGA_Operations() : state(fpga::undefined){}
 
             void prepare_read() {
 
@@ -28,6 +28,7 @@ namespace fpga {
             }
 
             state get_state() const {
+           
                 return state;
             }
 
@@ -80,18 +81,9 @@ namespace fpga {
     class FPGA_Adapter  {
        
         public:
-            FPGA_Adapter(const set< const string> rc, const set< const string> wc, const map< const string, const unsigned int> t, const Operator ops ) :    
-                            read_commands(rc),
-                            write_commands(wc),
-                            topics(t),
-                            operations(ops)
-                            {}
+            FPGA_Adapter(const Operator ops ) : operations(ops) {}
             
         protected:
-            const set< const string> read_commands;
-            const set< const string> write_commands;
-            const map< configuration::topic_key_t, configuration::topic_value_t> topics;
-
             Operator operations;
     };
 
@@ -102,61 +94,57 @@ namespace fpga {
 
         public:
 
-            FPGA() : FPGA_Adapter<Operator>( configuration::read_commands , configuration::write_commands, configuration::topics, Operator() ) {}
+            FPGA() : FPGA_Adapter<Operator>( Operator() ) {}
 
             void write( const configuration::data_t data, const configuration::topic_key_t topic) {
 
-                if (super::write_commands.find(topic) != super::write_commands.end()){
-
+                if (topic == "parameters"){
                     super::operations.prepare_write();
-
-                    if (topic == "parameters"){
-                        super::operations.write_parameters(data);
-                        return;
-                    }
-                    else if (topic == "weights") {
-                        super::operations.write_weights(data);
-                        return;
-                    }
-                    else if (topic == "topology") {
-                        super::operations.write_topology(data);
-                        return;
-                    }  
+                    super::operations.write_parameters(data);
+                    return;
+                }
+                else if (topic == "weights") {
+                    super::operations.prepare_write();
+                    super::operations.write_weights(data);
+                    return;
+                }
+                else if (topic == "topology") {
+                    super::operations.prepare_write();
+                    super::operations.write_topology(data);
+                    return;
                 }
                 else {
                     string msg("Error: Writing topic '" + topic + "' from FPGA not implemented.");
                     throw runtime_error(msg);
-                    return;
+                    return;   
                 }
             }
 
             const configuration::data_t read( const configuration::topic_key_t topic ) {
 
-                if (super::read_commands.find(topic) != super::read_commands.end()){
+                super::operations.prepare_read();
 
+                if (topic == "spikes"){
                     super::operations.prepare_read();
-
-                    if (topic == "spikes"){
-                        return super::operations.read_spikes();
-                    }
-                    else if (topic == "parameters") {
-                        return super::operations.read_parameters();
-                    }
-                    else if (topic == "weights") {
-                        return super::operations.read_weights();
-                    }
-                    else if (topic == "topology") {
-                        return super::operations.read_topology();
-                    } 
-                    else {
-                        return super::operations.read_empty();
-                    }
+                    return super::operations.read_spikes();
                 }
+                else if (topic == "parameters") {
+                    super::operations.prepare_read();
+                    return super::operations.read_parameters();
+                }
+                else if (topic == "weights") {
+                    super::operations.prepare_read();
+                    return super::operations.read_weights();
+                }
+                else if (topic == "topology") {
+                    super::operations.prepare_read();
+                    return super::operations.read_topology();
+                } 
                 else {
                     string msg("Error: Reading topic '" + topic + "' from FPGA not implemented.");
                     throw runtime_error(msg);
                     return super::operations.read_empty();
-                }
+                }   
             }
     };
 }

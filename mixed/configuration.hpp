@@ -20,8 +20,8 @@ namespace configuration {
     typedef const string topic_key_t;
     typedef const unsigned int topic_value_t;
 
-	const char *rc[] = {"weights", "parameters", "spikes", "topology"};
-	const char *wc[] = {"weights", "parameters", "topology"};
+	const char *rc[] = {"read_weights", "read_parameters", "read_spikes", "read_topology"};
+	const char *wc[] = {"write_weights", "write_parameters", "write_topology"};
 	
 	const set< const string> read_commands(rc, rc + sizeof(rc) / sizeof(*rc));
 	const set< const string> write_commands(wc, wc + sizeof(wc) / sizeof(*wc));
