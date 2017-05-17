@@ -55,10 +55,15 @@ class Commander(object):
 
 	def send_command(self, command, payload):
 
+		self.logger.debug("Preparing message")
+
 		payload_buffer = self.serializer.write_buffer(payload, topic = self.get_topic(command))
 		command_buffer = self.serializer.write_buffer(command, topic = "command")
 	
+		self.logger.debug("Sending message")
 		self.controller.send_multipart((command_buffer,payload_buffer))
+
+		self.logger.debug("Message send, waiting for acknowledgment.")
 
 		response_buffer = self.controller.recv()
 		response = self.serializer.read_buffer(response_buffer, topic = "command")
