@@ -23,10 +23,10 @@ namespace controller {
 
         public:
 
-            Controller() :  commander(connect_socket(ZMQ_REP, connections["controller"])),
-                            input_data(connect_socket(ZMQ_SUB, connections["camera"])),
-                            output_data(connect_socket(ZMQ_PUB, connections["monitor"])),
-                            command("wait")
+            Controller() :  commander(bind_socket(ZMQ_REP, connections["controller"])),
+                            input_data(bind_socket(ZMQ_SUB, connections["camera"])),
+                            output_data(bind_socket(ZMQ_PUB, connections["monitor"])),
+                            command("pause")
                             {
                                 // subscribe input data to everything
                                 input_data.setsockopt(ZMQ_SUBSCRIBE,"");
@@ -83,7 +83,7 @@ namespace controller {
 
                             // auto payload = serializer.deserialize_command(payload_buffer, topic);
 
-                            // cout << "Command is: " << command  << " and payload is: " << payload << std::endl;
+                          
 
 
                             
@@ -101,10 +101,11 @@ namespace controller {
                             return ;
                         }
 
-                        if (command != "wait") {
+                        if (command != "pause") {
                             handle_command();
                             cout << "Executed command: " << command << endl;
-                        }
+                        } 
+
 
                         sleep(1);
                     
@@ -112,12 +113,12 @@ namespace controller {
 
 
                         cout << e.what() << " Controller waiting for valid command." << endl;
-                        command = "wait";
+                        command = "pause";
                     }
                 }
             }
 
-            const string remove_prefix( string s, string prefix) {
+            const string get_topic_from_command( string s, string prefix) {
 
                 return s.erase(s.find(prefix), prefix.size());
             } 
@@ -126,7 +127,7 @@ namespace controller {
 
                 if (command.find("read_") != string::npos) {
                     
-                    auto topic = remove_prefix(command, "read_");
+                    auto topic = get_topic_from_command(command, "read_");
                     auto read_data = fpga.read(topic);
                     auto topic_buffer = serializer.serialize_command(topic, "command");
                     auto read_data_buffer = serializer.serialize_data(read_data, topic);
@@ -138,10 +139,10 @@ namespace controller {
 
                 if (command.find("write_") != string::npos) {
                     
-                    auto topic = remove_prefix(command, "write_");
+                    auto topic = get_topic_from_command(command, "write_");
                     auto write_data = serializer.deserialize_data(payload_buffer, topic);
                     fpga.write(write_data, topic);
-                    command = "wait";
+                    command = "pause";
                 }
 
 

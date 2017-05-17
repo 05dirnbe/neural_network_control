@@ -43,13 +43,22 @@ namespace configuration {
     { string("command"), 6 },
     { string("empty"), 7 }};
 
-	map< command_t, const string> connections = {
-    { string("commander"), string("tcp://" + ip + ":5555") },
-    { string("controller"), string("tcp://" + ip + ":5555") },
-    { string("input_data"), string("tcp://" + ip + ":5556") },
-    { string("camera"), string("tcp://" + ip + ":5556") },
-    { string("output_data"), string("tcp://" + ip + ":5557") },
-    { string("monitor"), string("tcp://" + ip + ":5557") }};
+	// map< command_t, const string> connections = {
+ //    { string("commander"), string("tcp://" + ip + ":5555") },
+ //    { string("controller"), string("tcp://" + ip + ":5555") },
+ //    { string("input_data"), string("tcp://" + ip + ":5556") },
+ //    { string("camera"), string("tcp://" + ip + ":5556") },
+ //    { string("output_data"), string("tcp://" + ip + ":5557") },
+ //    { string("monitor"), string("tcp://" + ip + ":5557") }};
+
+    map< command_t, const string> connections = {
+    { string("commander"), string("tcp://localhost:5555") },
+    { string("controller"), string("tcp://*:5555") },
+    { string("input_data"), string("tcp://localhost:5556") },
+    { string("camera"), string("tcp://*:5556") },
+    { string("output_data"), string("tcp://localhost:5557") },
+    { string("monitor"), string("tcp://*:5557") }};
+
 
     const map< const unsigned int, const string> socket_name = {
     { 1, string("ZMQ_PUB") },
