@@ -27,8 +27,10 @@ class TopicalMonitor(object):
 
 			while True:
 				
-				topic, data_buffer = self.data.recv().split(" ", 1)
-				data = self.serializer.read_buffer(data_buffer, topic = topic)
+				topic_buffer = self.data.recv()		# read the topic from the socket and dont do anything with it
+				data_buffer = self.data.recv()
+
+				data = self.serializer.read_buffer(data_buffer, topic = self.topic)
 
 				self.logger_parent.debug("Recieved: %s", data)
 				self.handle(data)
@@ -74,7 +76,6 @@ class FileLogger(TopicalMonitor):
 
 	def handle(self, data):
 
-		self.store.write(data+"\n")
 		self.logger.debug("Writing: %s", data)
 
 class Monitor(TopicalMonitor):
