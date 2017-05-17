@@ -82,8 +82,8 @@ class ParametersWriter(TopicalWriter):
 		# here all the valdimir code goes creating the topology data for the configuration file
 		# returned data must be any 1d numpy array of type int
 
-		np.random.seed(0)
-		return np.random.randint(256, size=5)
+		np.random.seed(3)
+		return np.random.randint(255, size=(2,5))
 
 	def write(self, filename):
 

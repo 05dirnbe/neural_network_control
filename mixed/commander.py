@@ -17,6 +17,7 @@ class Commander(object):
 		self.payload = payload
 
 		self.controller = communication.connect_socket(self.context, socket_type = zmq.REQ, connection = self.settings.connections["commander"])
+		# self.controller = communication.bind_socket(self.context, socket_type = zmq.REQ, connection = "tcp://*:5555")
 
 		self.logger = logging.getLogger("commander")
 
@@ -55,13 +56,12 @@ class Commander(object):
 	def send_command(self, command, payload):
 
 		payload_buffer = self.serializer.write_buffer(payload, topic = self.get_topic(command))
-		command_buffer = self.serializer.write_buffer(command, topic = self.settings.topics["command"])
+		command_buffer = self.serializer.write_buffer(command, topic = "command")
 	
-		message_buffer = command_buffer + " " + payload_buffer
-		self.controller.send(message_buffer)
+		self.controller.send_multipart((command_buffer,payload_buffer))
 
 		response_buffer = self.controller.recv()
-		response = self.serializer.read_buffer(response_buffer, topic = self.settings.topics["command"])
+		response = self.serializer.read_buffer(response_buffer, topic = "command")
 
 		self.logger.debug("Controller executed command: %s", response)
 		assert(command == response)

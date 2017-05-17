@@ -36,50 +36,17 @@ class Payload_Operations(object):
 		
 		pass
 
-	def read_weights(self, path):
+	def read_matrix(self, path):
 		self.logger.debug("Reading: %s", path)
 		return np.loadtxt(path, delimiter=',', dtype = int)
 
-	def read_parameters(self, path):
-		self.logger.debug("Reading: %s", path)
-		return np.loadtxt(path, delimiter=',', dtype = int)
-
-	def read_topology(self, path):
-		self.logger.debug("Reading: %s", path)
-		return np.loadtxt(path, delimiter=',', dtype = int)
-
-	def dummy_read(self, path):
-		self.logger.debug("Nothing to read ...")
-		return None
-
-	def write_weights(self, data, path):
-		assert isinstance(data, (np.ndarray, np.generic) )
-		assert len(data.shape) == 2
-		assert data.dtype == int
-
-		self.logger.debug("Writing: %s", path)
-		return np.savetxt(path, data , delimiter=',', fmt="%d")   
-
-	def write_parameters(self, data, path):
-		assert isinstance(data, (np.ndarray, np.generic) )
-		assert data.dtype == int
-
-		self.logger.debug("Writing: %s", path)
-		print "here"
-		return np.savetxt(path, data , delimiter=',', fmt="%d")
-
-	def write_topology(self, data, path):
+	def write_matrix(self, data, path):
 		assert isinstance(data, (np.ndarray, np.generic) )
 		assert len(data.shape) == 2
 		assert data.dtype == int
 
 		self.logger.debug("Writing: %s", path)
 		return np.savetxt(path, data , delimiter=',', fmt="%d")
-
-	def dummy_write(self, data, path):
-
-		self.logger.debug("Writing: %s", path)
-		return "Payload_dummy"
 
 class Payload_Adapter(object):
 
@@ -105,39 +72,38 @@ class Payload(Payload_Adapter):
 		if topic == "weights":
 			self.logger.debug("Requesting Payload read: %s", topic )
 			self.operator.prepare_read(path)
-			return self.operator.read_weights(path)
+			return self.operator.read_matrix(path)
 
 		if topic == "parameters":
 			self.logger.debug("Requesting Payload read: %s", topic )
 			self.operator.prepare_read(path)
-			return self.operator.read_parameters(path)
+			return self.operator.read_matrix(path)
 
 		if topic == "topology":
 			self.logger.debug("Requesting Payload read: %s", topic )
 			self.operator.prepare_read(path)
-			return self.operator.read_topology(path)
+			return self.operator.read_matrix(path)
 
-		return self.operator.dummy_read(path)
+		return None
 
 	def write(self, data, path, topic=None):
 
 		if topic == "weights":
 			self.logger.debug("Requesting Payload write: %s", topic )
 			self.operator.prepare_write(path)
-			# self.operator.write_weights(data, path)
-			return
+			self.operator.write_matrix(data, path)
+			pass
 
 		if topic == "parameters":
 			self.logger.debug("Requesting Payload write: %s", topic )
 			self.operator.prepare_write(path)
-			# self.operator.write_parameters(data, path)
-			return
+			self.operator.write_matrix(data, path)
+			pass
 
 		if topic == "topology":
 			self.logger.debug("Requesting Payload write: %s", topic )
 			self.operator.prepare_write(path)
-			# self.operator.write_topology(data, path)
-			return
+			self.operator.write_matrix(data, path)
+			pass
 
-		self.operator.dummy_write(data, path)
-
+		
