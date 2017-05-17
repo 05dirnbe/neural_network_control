@@ -1,0 +1,12 @@
+// Example IDL file for our monster's schema.
+namespace Buffer;
+
+table IntegerMatrix {
+  n:int;
+  m:int;
+  data:[int];   // Vector of int.
+}
+
+
+root_type IntegerMatrix;
+
