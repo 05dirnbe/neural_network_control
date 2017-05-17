@@ -11,8 +11,10 @@ namespace fpga {
     using namespace std;
     using namespace Eigen;
     
-    typedef int32_t value_t;
-    typedef Matrix< value_t, Dynamic, Dynamic, RowMajor > matrix_t;
+    typedef configuration::topic_t topic_t;
+    typedef configuration::command_t command_t;
+    typedef configuration::value_t value_t;
+    typedef configuration::matrix_t matrix_t;
     typedef Matrix< value_t, Dynamic, 1 > vector_t;
 
     enum state { read, write, undefined };
@@ -125,7 +127,7 @@ namespace fpga {
 
             FPGA() : FPGA_Adapter<Operator>( Operator() ) {}
 
-            void write( const matrix_t & data, const configuration::topic_key_t topic) {
+            void write( const matrix_t & data, const topic_t topic) {
 
                 if (topic == "parameters"){
                     super::operations.prepare_write();
@@ -154,7 +156,7 @@ namespace fpga {
                 }
             }
 
-            const matrix_t read( const configuration::topic_key_t topic ) {
+            const matrix_t read( const topic_t topic ) {
 
                 super::operations.prepare_read();
 

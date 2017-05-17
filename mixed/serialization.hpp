@@ -15,8 +15,11 @@ namespace serialization {
     using namespace Buffer;
     using namespace Eigen;
 
-    typedef int32_t value_t;
-    typedef Matrix< value_t, Dynamic, Dynamic, RowMajor > matrix_t;
+    typedef configuration::topic_t topic_t;
+    typedef configuration::command_t command_t;
+    typedef configuration::buffer_t buffer_t;
+    typedef configuration::value_t value_t;
+    typedef configuration::matrix_t matrix_t;
     typedef Matrix< value_t, Dynamic, 1 > vector_t;
 
 
@@ -31,7 +34,7 @@ namespace serialization {
 
         public:
 
-            const matrix_t deserialize_matrix( zmq::message_t & buffer) const {
+            const matrix_t deserialize_matrix( buffer_t & buffer) const {
                 
                 const auto mat_restored = GetIntegerMatrix(buffer.data());
 
@@ -44,22 +47,13 @@ namespace serialization {
                 
                 for (unsigned int i = 0; i < data_size; ++i)
                     flat_data_restored[i] =  data_restored->Get(i);
-
-                
-                // cout << "restored n to: " << n << endl;
-                // cout << "restored m to: " << m << endl;
-                // cout << "restored data has size: " << data_size << endl;
-
-                // cout << "data restored to : \n" << flat_data_restored << endl;
                 
                 const Map<matrix_t> matrix(flat_data_restored.data(), n_restored, m_restored);
-
-                // cout << matrix_restored << endl;
 
                 return matrix;
             }
 
-            zmq::message_t serialize_matrix(const matrix_t data ) const {
+            buffer_t serialize_matrix(const matrix_t data ) const {
                 
                 // auto matrix = generate_random_matrix<matrix_t, value_t>(2,3);
 
@@ -77,27 +71,27 @@ namespace serialization {
                 const auto buffer_pointer = builder.GetBufferPointer();
                 const auto buffer_size = builder.GetSize();
 
-                zmq::message_t data_buffer(buffer_size);
+                buffer_t data_buffer(buffer_size);
 
                 memcpy( data_buffer.data(), buffer_pointer, buffer_size );
 
                 return data_buffer;
             }
 
-            const configuration::command_t deserialize_command( zmq::message_t& buffer) const {
+            const command_t deserialize_command( buffer_t& buffer) const {
                 return string(static_cast<char*>(buffer.data()), buffer.size());
             }
 
-            zmq::message_t serialize_command(const string & command ) const {
+            buffer_t serialize_command(const string & command ) const {
                 
-                zmq::message_t buffer(command.size());
+                buffer_t buffer(command.size());
                 memcpy(buffer.data (), command.c_str(), command.size());
                 
                 return buffer;
             }
 
-            zmq::message_t serialize_empty() const {
-                zmq::message_t empty_buffer;
+            buffer_t serialize_empty() const {
+                buffer_t empty_buffer;
                 return empty_buffer;
             }
 
@@ -105,7 +99,7 @@ namespace serialization {
                 return matrix_t();
             }
 
-            const configuration::command_t deserialize_empty_command() const {
+            const command_t deserialize_empty_command() const {
                 return 0;
             }
     };
@@ -130,7 +124,7 @@ namespace serialization {
 
             Serializer() : Serializer_Adapter<Operator>( Operator() ) {}
 
-            zmq::message_t serialize_data( const matrix_t & data, const configuration::topic_key_t topic) {
+            buffer_t serialize_data( const matrix_t & data, const topic_t topic) {
 
                 if (topic == "spikes"){
                     return super::operations.serialize_matrix(data);
@@ -154,7 +148,7 @@ namespace serialization {
                 }
             }
 
-            const matrix_t deserialize_data( zmq::message_t & buffer, const configuration::topic_key_t topic) {
+            const matrix_t deserialize_data( buffer_t & buffer, const topic_t topic) {
 
                 if (topic == "spikes"){
                     return super::operations.deserialize_matrix(buffer);
@@ -178,7 +172,7 @@ namespace serialization {
                 }
             }
 
-            zmq::message_t serialize_command( const string & data, const configuration::topic_key_t topic) {
+            buffer_t serialize_command( const command_t & data, const topic_t topic) {
 
                 if (topic == "command"){
                     return super::operations.serialize_command(data);
@@ -190,7 +184,7 @@ namespace serialization {
                 }  
             }
 
-            const string deserialize_command( zmq::message_t & buffer, const configuration::topic_key_t topic) {
+            const command_t deserialize_command( buffer_t & buffer, const topic_t topic) {
 
                 if (topic == "command"){
                     return super::operations.deserialize_command(buffer);

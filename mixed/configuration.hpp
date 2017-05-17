@@ -5,24 +5,19 @@
 #include <set>
 #include <string>
 #include <zmq.hpp>
+#include <Eigen/Dense>
 
 namespace configuration {
 
 	using namespace std;
 
-    typedef const unsigned int matrix_t;
+    typedef int32_t value_t;
+    typedef Eigen::Matrix< value_t, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor > matrix_t;
     typedef matrix_t data_t;
 
-    typedef data_t parameters_t;
-    typedef data_t weights_t;
-    typedef data_t spikes_t;
-    typedef data_t topology_t;
     typedef const string command_t;
-    
+    typedef command_t topic_t;
     typedef zmq::message_t buffer_t;
-
-    typedef command_t topic_key_t;
-    typedef const unsigned int topic_value_t;
 
 	const char *rc[] = {"read_weights", "read_parameters", "read_spikes", "read_topology"};
 	const char *wc[] = {"write_weights", "write_parameters", "write_topology"};
@@ -34,40 +29,40 @@ namespace configuration {
 	string raspberry_ip("localhost");
 	string ip = raspberry_ip;
 	
-    map< topic_key_t, topic_value_t> topics = {
-    { string("weights"), 1 },
-    { string("parameters"), 2 },
-    { string("spikes"), 3 },
-    { string("topology"), 4 },
-    { string("camera"), 5 },
-    { string("command"), 6 },
-    { string("empty"), 7 }};
+    map< topic_t, const unsigned int> topics = {
+    { "weights", 1 },
+    { "parameters", 2 },
+    { "spikes", 3 },
+    { "topology", 4 },
+    { "camera", 5 },
+    { "command", 6 },
+    { "empty", 7 }};
 
     // these settings have worked in the pure python implementation to connect everything
-	// map< command_t, const string> connections = {
- //    { string("commander"), string("tcp://" + ip + ":5555") },
- //    { string("controller"), string("tcp://" + ip + ":5555") },
- //    { string("input_data"), string("tcp://" + ip + ":5556") },
- //    { string("camera"), string("tcp://" + ip + ":5556") },
- //    { string("output_data"), string("tcp://" + ip + ":5557") },
- //    { string("monitor"), string("tcp://" + ip + ":5557") }};
+	// map< const string, const string> connections = {
+ //    { "commander", "tcp://" + ip + ":5555" },
+ //    { "controller", "tcp://" + ip + ":5555" },
+ //    { "input_data", "tcp://" + ip + ":5556" },
+ //    { "camera", "tcp://" + ip + ":5556" },
+ //    { "output_data", "tcp://" + ip + ":5557" },
+ //    { "monitor", "tcp://" + ip + ":5557" }};
 
-    map< command_t, const string> connections = {
-    { string("commander"), string("tcp://localhost:5555") },
-    { string("controller"), string("tcp://*:5555") },
-    { string("input_data"), string("tcp://localhost:5556") },
-    { string("camera"), string("tcp://*:5556") },
-    { string("output_data"), string("tcp://localhost:5557") },
-    { string("monitor"), string("tcp://*:5557") }};
+    map< const string, const string> connections = {
+    { "commander", "tcp://localhost:5555" },
+    { "controller", "tcp://*:5555" },
+    { "input_data", "tcp://localhost:5556" },
+    { "camera", "tcp://*:5556" },
+    { "output_data", "tcp://localhost:5557" },
+    { "monitor", "tcp://*:5557" }};
 
 
     const map< const unsigned int, const string> socket_name = {
-    { 1, string("ZMQ_PUB") },
-    { 2, string("ZMQ_SUB") },
-    { 3, string("ZMQ_REQ") },
-    { 4, string("ZMQ_REP") },
-    { 5, string("ZMQ_DEALER") },
-    { 6, string("ZMQ_ROUTER") }};  
+    { 1, "ZMQ_PUB" },
+    { 2, "ZMQ_SUB" },
+    { 3, "ZMQ_REQ" },
+    { 4, "ZMQ_REP" },
+    { 5, "ZMQ_DEALER" },
+    { 6, "ZMQ_ROUTER" }};  
 }
 
 #endif	//CONFIGURATION_HPP

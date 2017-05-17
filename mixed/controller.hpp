@@ -4,8 +4,6 @@
 #include <iostream>
 #include <string>
 #include <zmq.hpp>
-#include <stdlib.h>
-// #include "zhelpers.hpp"
 
 # include "configuration.hpp"
 # include "communication.hpp"
@@ -59,7 +57,7 @@ namespace controller {
                         
                         // then we check the input socket whether camera events have arrived
                         if (items[1].revents & ZMQ_POLLIN) {
-                            cout << "stuff arriving on input_data" << endl;
+                           
                             input_data.recv(&camera_buffer);
                             auto camera_data = serializer.deserialize_data(camera_buffer, "camera");
                             fpga.write(camera_data, "camera");
@@ -117,8 +115,7 @@ namespace controller {
                     command = "pause";
                 }
             }
-
-            
+    
         private:
 
             fpga::FPGA<> fpga;
@@ -131,8 +128,7 @@ namespace controller {
             string command;
             message_t command_buffer;
             message_t payload_buffer;
-            message_t camera_buffer;
-            
+            message_t camera_buffer;          
     };
 }
 
