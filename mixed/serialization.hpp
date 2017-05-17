@@ -16,13 +16,12 @@ namespace serialization {
     using namespace Eigen;
 
     typedef int32_t value_t;
-    typedef uint8_t buffer_t;
     typedef Matrix< value_t, Dynamic, Dynamic, RowMajor > matrix_t;
     typedef Matrix< value_t, Dynamic, 1 > vector_t;
 
 
     template < typename M, typename T >
-    const M generate_matrix(const unsigned int nrow, const unsigned int mcol){
+    const M generate_random_matrix(const unsigned int nrow, const unsigned int mcol){
 
         const MatrixXd m = (MatrixXd::Random(nrow,mcol) + MatrixXd::Ones(nrow,mcol) ) * 5;
         return m.cast< const T >();
@@ -32,7 +31,7 @@ namespace serialization {
 
         public:
 
-            const configuration::matrix_t deserialize_matrix( zmq::message_t & buffer) const {
+            const matrix_t deserialize_matrix( zmq::message_t & buffer) const {
                 
                 const auto mat_restored = GetIntegerMatrix(buffer.data());
 
@@ -53,16 +52,18 @@ namespace serialization {
 
                 // cout << "data restored to : \n" << flat_data_restored << endl;
                 
-                const Map<matrix_t> matrix_restored(flat_data_restored.data(), n_restored, m_restored);
+                const Map<matrix_t> matrix(flat_data_restored.data(), n_restored, m_restored);
 
                 // cout << matrix_restored << endl;
 
-                return 10;
+                return matrix;
             }
 
-            zmq::message_t serialize_matrix(const configuration::matrix_t data ) const {
+            zmq::message_t serialize_matrix(const matrix_t data ) const {
                 
-                auto matrix = generate_matrix<matrix_t, value_t>(2,3);
+                // auto matrix = generate_random_matrix<matrix_t, value_t>(2,3);
+
+                auto matrix = data;
 
                 const auto n = matrix.rows();
                 const auto m = matrix.cols();
@@ -100,8 +101,8 @@ namespace serialization {
                 return empty_buffer;
             }
 
-            const configuration::data_t deserialize_empty_data() const {
-                return 0;
+            const matrix_t deserialize_empty_data() const {
+                return matrix_t();
             }
 
             const configuration::command_t deserialize_empty_command() const {
@@ -129,7 +130,7 @@ namespace serialization {
 
             Serializer() : Serializer_Adapter<Operator>( Operator() ) {}
 
-            zmq::message_t serialize_data( const configuration::data_t & data, const configuration::topic_key_t topic) {
+            zmq::message_t serialize_data( const matrix_t & data, const configuration::topic_key_t topic) {
 
                 if (topic == "spikes"){
                     return super::operations.serialize_matrix(data);
@@ -141,6 +142,9 @@ namespace serialization {
                     return super::operations.serialize_matrix(data);
                 }
                 else if (topic == "topology") {
+                    return super::operations.serialize_matrix(data);
+                }
+                else if (topic == "camera") {
                     return super::operations.serialize_matrix(data);
                 }
                 else {
@@ -150,7 +154,7 @@ namespace serialization {
                 }
             }
 
-            configuration::data_t deserialize_data( zmq::message_t & buffer, const configuration::topic_key_t topic) {
+            const matrix_t deserialize_data( zmq::message_t & buffer, const configuration::topic_key_t topic) {
 
                 if (topic == "spikes"){
                     return super::operations.deserialize_matrix(buffer);
@@ -162,6 +166,9 @@ namespace serialization {
                     return super::operations.deserialize_matrix(buffer);
                 }
                 else if (topic == "topology") {
+                    return super::operations.deserialize_matrix(buffer);
+                }
+                else if (topic == "camera") {
                     return super::operations.deserialize_matrix(buffer);
                 }
                 else {

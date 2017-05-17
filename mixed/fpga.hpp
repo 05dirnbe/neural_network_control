@@ -4,12 +4,25 @@
 #include <string>
 
 #include "configuration.hpp"
+#include <Eigen/Dense>
 
 namespace fpga {
 
     using namespace std;
+    using namespace Eigen;
     
+    typedef int32_t value_t;
+    typedef Matrix< value_t, Dynamic, Dynamic, RowMajor > matrix_t;
+    typedef Matrix< value_t, Dynamic, 1 > vector_t;
+
     enum state { read, write, undefined };
+
+    template < typename M, typename T >
+    const M generate_random_matrix(const unsigned int nrow, const unsigned int mcol){
+
+        const MatrixXd m = (MatrixXd::Random(nrow,mcol) + MatrixXd::Ones(nrow,mcol) ) * 5;
+        return m.cast< const T >();
+    }
 
     class FPGA_Operations {
 
@@ -32,44 +45,60 @@ namespace fpga {
                 return state;
             }
 
-            const configuration::weights_t read_weights() const {
-            
-                return configuration::topics["weights"];
+            const matrix_t read_weights() const {
+                
+                cout << "Reading weights from FPGA:" << endl;
+               
+                return generate_random_matrix<matrix_t, value_t>(2,2);
             }
 
-            const configuration::parameters_t read_parameters() const {
-            
-                return configuration::topics["parameters"];
+            const matrix_t read_parameters() const {
+                
+                cout << "Reading parameters from FPGA:" << endl;
+               
+                return generate_random_matrix<matrix_t, value_t>(2,2);
             }
 
-            const configuration::spikes_t read_spikes() const {
-            
-                return configuration::topics["spikes"];
+            const matrix_t read_spikes() const {
+                
+                cout << "Reading spikes from FPGA:" << endl;
+           
+                return generate_random_matrix<matrix_t, value_t>(2,2);
             }
   
-            const configuration::topology_t read_topology() const {
+            const matrix_t read_topology() const {
+                
+                cout << "Reading topology from FPGA:" << endl;
+                
+                return generate_random_matrix<matrix_t, value_t>(2,2);
+            }
+
+            const matrix_t read_empty() const {
             
-                return configuration::topics["topology"];
+                return matrix_t();
             }
 
-            const configuration::data_t read_empty() const {
-            
-                return configuration::topics["empty"];
-            }
-
-            void write_parameters(const configuration::parameters_t data ) const {
+            void write_parameters(const matrix_t & data ) const {
+                cout << "Writing parameters to FPGA:" << endl;
                 cout << data << endl;
             }
 
-            void write_topology(const configuration::topology_t data ) const {
+            void write_topology(const matrix_t & data ) const {
+                cout << "Writing topology to FPGA:" << endl;
                 cout << data << endl;
             }
 
-            void write_weights(const configuration::weights_t data ) const {
+            void write_weights(const matrix_t & data ) const {
+                cout << "Writing weights to FPGA:" << endl;
                 cout << data << endl;
             }
 
-            void write_empty(const configuration::data_t data) const {}
+            void write_camera(const matrix_t & data ) const {
+                cout << "Writing camera data to FPGA:" << endl;
+                cout << data << endl;
+            }
+
+            void write_empty(const matrix_t & data) const {}
 
         private:
 
@@ -96,7 +125,7 @@ namespace fpga {
 
             FPGA() : FPGA_Adapter<Operator>( Operator() ) {}
 
-            void write( const configuration::data_t data, const configuration::topic_key_t topic) {
+            void write( const matrix_t & data, const configuration::topic_key_t topic) {
 
                 if (topic == "parameters"){
                     super::operations.prepare_write();
@@ -113,6 +142,11 @@ namespace fpga {
                     super::operations.write_topology(data);
                     return;
                 }
+                else if (topic == "camera") {
+                    super::operations.prepare_write();
+                    super::operations.write_camera(data);
+                    return;
+                }
                 else {
                     string msg("Error: Writing topic '" + topic + "' to FPGA not implemented.");
                     throw runtime_error(msg);
@@ -120,7 +154,7 @@ namespace fpga {
                 }
             }
 
-            const configuration::data_t read( const configuration::topic_key_t topic ) {
+            const matrix_t read( const configuration::topic_key_t topic ) {
 
                 super::operations.prepare_read();
 

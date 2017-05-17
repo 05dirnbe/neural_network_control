@@ -43,6 +43,7 @@ namespace configuration {
     { string("command"), 6 },
     { string("empty"), 7 }};
 
+    // these settings have worked in the pure python implementation to connect everything
 	// map< command_t, const string> connections = {
  //    { string("commander"), string("tcp://" + ip + ":5555") },
  //    { string("controller"), string("tcp://" + ip + ":5555") },

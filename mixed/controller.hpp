@@ -29,34 +29,8 @@ namespace controller {
                             command("pause")
                             {
                                 // subscribe input data to everything
-                                input_data.setsockopt(ZMQ_SUBSCRIBE,"");
-
-                                // items[0].socket = input_data;
-                                // items[0].events = ZMQ_POLLIN;
-
-                                // items[1].socket = commander;
-                                // items[1].events = ZMQ_POLLIN;
+                                input_data.setsockopt(ZMQ_SUBSCRIBE, "", 0);
                             }
-
-            static bool s_send (zmq::socket_t & socket, const std::string & string) {
-
-                zmq::message_t message(string.size());
-                memcpy (message.data(), string.data(), string.size());
-
-                bool rc = socket.send (message);
-                return (rc);
-            }
-
-            //  Sends string as 0MQ string, as multipart non-terminal
-            static bool s_sendmore (zmq::socket_t & socket, const std::string & string) {
-
-                zmq::message_t message(string.size());
-                memcpy (message.data(), string.data(), string.size());
-
-                bool rc = socket.send (message, ZMQ_SNDMORE);
-                return (rc);
-            }
-
 
             void serve_forever() {
 
@@ -69,7 +43,7 @@ namespace controller {
 
                     try {
 
-                        poll(&items[0], 2, 0);
+                        poll(items, 2, 0);
                         
                         // first we poll the commander socket for arriving commands and associated payloads
                         if (items[0].revents & ZMQ_POLLIN) {
@@ -78,23 +52,18 @@ namespace controller {
                             commander.recv(&payload_buffer);
                             
                             command = serializer.deserialize_command(command_buffer, "command");
-
-                            // string topic = "command";
-
-                            // auto payload = serializer.deserialize_command(payload_buffer, topic);
-
-                          
-
-
                             
-                            
-                            commander.send(serializer.serialize_command(command, "command"));
-
+                            //reply to commander immediately
+                            commander.send(command_buffer);
                         }
-                        // if (items[1].revents & ZMQ_POLLIN) {
-                        //     subscriber.recv(&message);
-                        //     //  Process weather update
-                        // }
+                        
+                        // then we check the input socket whether camera events have arrived
+                        if (items[1].revents & ZMQ_POLLIN) {
+                            cout << "stuff arriving on input_data" << endl;
+                            input_data.recv(&camera_buffer);
+                            auto camera_data = serializer.deserialize_data(camera_buffer, "camera");
+                            fpga.write(camera_data, "camera");
+                        }
                         
                         if (command == "quit") {
                             cout << "Recieved command: " << command << endl;
@@ -105,7 +74,6 @@ namespace controller {
                             handle_command();
                             cout << "Executed command: " << command << endl;
                         } 
-
 
                         sleep(1);
                     
@@ -129,6 +97,9 @@ namespace controller {
                     
                     auto topic = get_topic_from_command(command, "read_");
                     auto read_data = fpga.read(topic);
+
+                    cout << read_data << endl;
+
                     auto topic_buffer = serializer.serialize_command(topic, "command");
                     auto read_data_buffer = serializer.serialize_data(read_data, topic);
 
@@ -141,11 +112,10 @@ namespace controller {
                     
                     auto topic = get_topic_from_command(command, "write_");
                     auto write_data = serializer.deserialize_data(payload_buffer, topic);
+
                     fpga.write(write_data, topic);
                     command = "pause";
                 }
-
-
             }
 
             
@@ -161,6 +131,7 @@ namespace controller {
             string command;
             message_t command_buffer;
             message_t payload_buffer;
+            message_t camera_buffer;
             
     };
 }
