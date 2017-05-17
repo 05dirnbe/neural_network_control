@@ -96,13 +96,14 @@ namespace controller {
                         //     //  Process weather update
                         // }
                         
-                        cout << command << endl;
-
-                        if (command == "quit")
+                        if (command == "quit") {
+                            cout << "Recieved command: " << command << endl;
                             return ;
+                        }
 
                         if (command != "wait") {
                             handle_command();
+                            cout << "Executed command: " << command << endl;
                         }
 
                         sleep(1);

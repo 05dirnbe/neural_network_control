@@ -19,9 +19,9 @@ int main () {
 
 
 
-    string command = "write_spikes";
+    // string command = "write_spikes";
     // string command = "read_topology";
-    // string command = "quit";
+    string command = "quit";
     string payload = "payload";
     string topic = "command";
     
