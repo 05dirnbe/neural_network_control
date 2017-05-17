@@ -4,6 +4,7 @@ import zmq
 import communication
 import configuration
 import serialization
+import numpy as np
 
 def main(args, context):
 	
@@ -19,9 +20,10 @@ def main(args, context):
 
 		for i in xrange(args.n):
 			
-			logger.debug("Sending: %s", str(i))
+			message = np.zeros((2,2),dtype=int)
+			message += i
+			logger.debug("Sending: %s", message)
 
-			message = i
 			message_buffer = serializer.write_buffer(message, topic = "camera")
 			input_data.send(message_buffer)
 			

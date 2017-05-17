@@ -67,7 +67,6 @@ class Serializer_Operations(object):
 
 		data_buffer = builder.Output()
 
-		self.logger.debug("Serializing: %s", data)
 		return data_buffer
 
 	def serialize_command(self, data, initial_buffer_size = 1024):
@@ -99,18 +98,49 @@ class Serializer(Serializer_Adapter):
 
 		self.logger.debug("Deserialzing topic: %s", topic )
 		
+		if topic == "weights":
+			return self.operator.deserialize_matrix(data_buffer)
+
+		if topic == "parameters":
+			return self.operator.deserialize_matrix(data_buffer)
+
+		if topic == "spikes":
+			return self.operator.deserialize_matrix(data_buffer)
+
+		if topic == "topology":
+			return self.operator.deserialize_matrix(data_buffer)
+
+		if topic == "camera":
+			return self.operator.deserialize_matrix(data_buffer)
+
 		if topic == "command":
 			return self.operator.deserialize_command(data_buffer)
+
 		else:
-			return self.operator.deserialize_matrix(data_buffer)
+			return data_buffer
 
 	def write_buffer(self, data, topic=None):
 
 		self.logger.debug("Serializing topic: %s", topic )
 		
-		if topic == "command":
-			return self.operator.serialize_command(data)
-		else:
+		if topic == "weights":
 			return self.operator.serialize_matrix(data)
 			
+		if topic == "parameters":
+			return self.operator.serialize_matrix(data)
+			
+		if topic == "spikes":
+			return self.operator.serialize_matrix(data)
+			
+		if topic == "topology":
+			return self.operator.serialize_matrix(data)
+			
+		if topic == "camera":
+			return self.operator.serialize_matrix(data)
+
+		if topic == "command":
+			return self.operator.serialize_command(data)
+
+		else:
+			return "None"		
 
